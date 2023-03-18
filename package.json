@@ -18,8 +18,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:development:create": "cross-env NODE_ENV=development npm run build && typeorm migration:create",
-    "migration:development:run": "cross-env NODE_ENV=development npm run build && typeorm -d dist/modules/database/datasource.js migration:run"
+    "migration:create": "npm run build && typeorm migration:create",
+    "migration:development:up": "npm run build && typeorm -d dist/modules/database/datasource.development.js migration:run",
+    "migration:development:down": "npm run build && typeorm -d dist/modules/database/datasource.development.js migration:revert",
+    "migration:staging:up": "npm run build && typeorm -d dist/modules/database/datasource.staging.js migration:run",
+    "migration:staging:down": "npm run build && typeorm -d dist/modules/database/datasource.staging.js migration:revert",
+    "migration:production:up": "npm run build && typeorm -d dist/modules/database/datasource.production.js migration:run",
+    "migration:production:down": "npm run build && typeorm -d dist/modules/database/datasource.production.js migration:revert"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import DatabaseType from 'src/types/database.type';
+import { DatabaseType } from 'src/types/database.type';
 
 @Injectable()
 export class ConfigService {
@@ -9,12 +9,17 @@ export class ConfigService {
     this.config = this.load();
   }
 
-  private load() {
-    let config = require(`./../../../config/config.development.json`);
+  private load(env?: string) {
+    let config = require(`./../../../config/config.${
+      env || process.env.NODE_ENV || 'development'
+    }.json`);
     return config;
   }
 
-  public get(property: string) {
+  public get(property: string, env?: string) {
+    if (!!env) {
+      this.load(env);
+    }
     return this.config[property];
   }
 }
