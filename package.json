@@ -24,7 +24,8 @@
     "migration:staging:up": "npm run build && typeorm -d dist/modules/database/datasource.staging.js migration:run",
     "migration:staging:down": "npm run build && typeorm -d dist/modules/database/datasource.staging.js migration:revert",
     "migration:production:up": "npm run build && typeorm -d dist/modules/database/datasource.production.js migration:run",
-    "migration:production:down": "npm run build && typeorm -d dist/modules/database/datasource.production.js migration:revert"
+    "migration:production:down": "npm run build && typeorm -d dist/modules/database/datasource.production.js migration:revert",
+    "create:user": "npm run build && node cli create-user"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -33,7 +34,10 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
-    "joi": "^17.8.4",
+    "@squareboat/nest-console": "^1.1.1",
+    "bcrypt": "^5.1.0",
+    "moment-timezone": "^0.5.41",
+    "nest-commander": "^3.6.1",
     "pg": "^8.10.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.5",
@@ -43,6 +47,7 @@
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
+    "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.13",
     "@types/jest": "^28.1.4",
     "@types/node": "^18.0.3",

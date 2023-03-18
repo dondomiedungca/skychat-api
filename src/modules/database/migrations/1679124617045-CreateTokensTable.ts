@@ -16,7 +16,7 @@ export class CreateTokensTable1679124617045 implements MigrationInterface {
             ALTER TABLE tokens 
    DROP CONSTRAINT tokens_user_id_fkey; 
    
-            DROP TABLE IF EXISTS users;
+            DROP TABLE IF EXISTS tokens;
         `);
   }
 }

@@ -9,11 +9,11 @@ export class CreateUsersTable1679124552143 implements MigrationInterface {
                 last_name VARCHAR ( 100 ) NOT NULL,
                 email VARCHAR ( 100 ) NOT NULL,
                 password VARCHAR ( 120 ) NOT NULL,
-                created_at TIMESTAMP WITHOUT TIME ZONE,
-                updated_at TIMESTAMP WITHOUT TIME ZONE,
-                verified_at TIMESTAMP WITHOUT TIME ZONE NULL,
+                created_at TIMESTAMP WITH TIME ZONE,
+                updated_at TIMESTAMP WITH TIME ZONE,
+                verified_at TIMESTAMP WITH TIME ZONE NULL,
                 is_deleted BOOLEAN DEFAULT FALSE,
-                deleted_at TIMESTAMP WITHOUT TIME ZONE NULL
+                deleted_at TIMESTAMP WITH TIME ZONE NULL
             );
         `);
   }

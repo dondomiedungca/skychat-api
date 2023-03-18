@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseType } from 'src/types/database.type';
+import { ConfigType } from 'src/types/config.type';
 
 @Injectable()
 export class ConfigService {
-  private config: DatabaseType;
+  private config: ConfigType;
 
   constructor() {
     this.config = this.load();
   }
 
-  private load(env?: string) {
+  private load(env?: string): ConfigType {
     let config = require(`./../../../config/config.${
       env || process.env.NODE_ENV || 'development'
     }.json`);

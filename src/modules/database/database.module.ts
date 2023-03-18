@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceDevelopmentOptions } from './datasource.development';
 import { dataSourceStagingOptions } from './datasource.staging';
 import { dataSourceProductionOptions } from './datasource.production';
+import { DatabaseService } from './database.service';
 
 @Module({
   imports: [
@@ -19,6 +20,8 @@ import { dataSourceProductionOptions } from './datasource.production';
       },
     }),
   ],
+  exports: [DatabaseService],
+  providers: [DatabaseService],
 })
 class DatabaseModule {}
 
