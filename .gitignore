@@ -394,5 +394,11 @@ Temporary Items
 
 =======
 # Local
-.env
 dist
+db_data/*
+
+# config
+/config/config.staging.json
+/config/config.production.json
+
+*.code-workspace

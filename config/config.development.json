@@ -1,0 +1,21 @@
+{
+  "PORT": 3005,
+  "token": {
+    "publicKey": "test_public",
+    "privateKey": "test_private",
+    "exp": {
+      "days": 14,
+      "hours": 12
+    }
+  },
+  "database": {
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "skychat",
+    "password": "password",
+    "database": "skychat_development",
+    "entities": [],
+    "synchronize": true
+  }
+}
