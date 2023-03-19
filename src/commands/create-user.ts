@@ -12,20 +12,31 @@ export class CreateUser {
     private readonly userService: UserService,
   ) {}
 
-  @Command('create-user {name=world}', {
+  @Command('create-user', {
     desc: 'Create a normal user (NOTE: You should create first the Admin user nad only once).',
   })
   async promptUserInput(_cli: ConsoleIO) {
     _cli.info(`Good day! Let's create your first user`);
-    _cli.info(
-      `(NOTE: You should create first the Admin user nad only once).\n`,
-    );
+    _cli.info(`(NOTE: You should have atleast 1 admin user.\n`);
 
+    let role: RolesType;
     let firstName: string;
     let lastName: string;
     let email: string;
     let password: string;
     let confirm_password: string;
+
+    while (!role) {
+      role = (await _cli.select(
+        'Select a role type',
+        [RolesType.ADMIN, RolesType.NORMAL_USER],
+        false,
+      )) as RolesType;
+
+      if (!role) {
+        _cli.error('Role type is required');
+      }
+    }
 
     while (!firstName) {
       firstName = await _cli.ask('What is the First name?');
@@ -101,7 +112,7 @@ export class CreateUser {
         email,
         password,
       },
-      RolesType.NORMAL_USER,
+      role,
     );
 
     _cli.success(

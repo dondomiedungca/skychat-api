@@ -395,10 +395,11 @@ Temporary Items
 =======
 # Local
 dist
-db_data/*
+data/pg/*
 
 # config
-/config/config.staging.json
-/config/config.production.json
+/configurations/config.staging.json
+/configurations/config.production.json
+/configurations/keys/*.pem
 
 *.code-workspace

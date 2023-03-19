@@ -25,17 +25,20 @@
     "migration:staging:down": "npm run build && typeorm -d dist/modules/database/datasource.staging.js migration:revert",
     "migration:production:up": "npm run build && typeorm -d dist/modules/database/datasource.production.js migration:run",
     "migration:production:down": "npm run build && typeorm -d dist/modules/database/datasource.production.js migration:revert",
-    "create:user": "npm run build && node cli create-user"
+    "create:user": "npm run build && node cli create-user",
+    "create:keypair": "npm run build && node cli create-keypair"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/event-emitter": "^1.4.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
     "@squareboat/nest-console": "^1.1.1",
     "bcrypt": "^5.1.0",
+    "crypto": "^1.0.1",
     "moment-timezone": "^0.5.41",
     "nest-commander": "^3.6.1",
     "pg": "^8.10.0",

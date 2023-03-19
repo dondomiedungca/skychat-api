@@ -10,7 +10,7 @@ export class ConfigService {
   }
 
   private load(env?: string): ConfigType {
-    let config = require(`./../../../config/config.${
+    let config = require(`./../../../configurations/config.${
       env || process.env.NODE_ENV || 'development'
     }.json`);
     return config;

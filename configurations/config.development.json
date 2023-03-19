@@ -2,8 +2,6 @@
   "PORT": 3005,
   "token": {
     "saltRound": 10,
-    "publicKey": "test_public",
-    "privateKey": "test_private",
     "exp": {
       "days": 14,
       "hours": 12

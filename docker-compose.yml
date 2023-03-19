@@ -6,10 +6,12 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - ./db/pg:/var/lib/postgresql/db_data
-      - ./db_initials:/docker-entrypoint-initdb.d/
+      - ./data/pg:/var/lib/postgresql/db_data/
+      - ./data/initials:/docker-entrypoint-initdb.d/
     restart: always
     environment:
       POSTGRES_DB: 'skychat_development'
       POSTGRES_USER: 'skychat'
       POSTGRES_PASSWORD: 'password'
+volumes:
+  data:

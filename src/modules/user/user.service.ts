@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment-timezone';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,6 +14,7 @@ import { RolesType } from './../../types/roles.type';
 @Injectable()
 export class UserService {
   constructor(
+    private eventEmitter: EventEmitter2,
     private readonly userRepository: UserRepository,
     private readonly configService: ConfigService,
   ) {}
@@ -55,6 +57,13 @@ export class UserService {
       updated_at: moment.utc().toDate(),
     };
 
+    const payload = {
+      email: user.email,
+      hash: 'test hash',
+    };
+
     await this.userRepository.create(data, role);
+
+    this.eventEmitter.emit('command.user.created', payload);
   }
 }
