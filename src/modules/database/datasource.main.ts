@@ -13,7 +13,7 @@ export const initializeOptions = (env: string): DataSourceOptions => {
     username: dataConfig.username,
     password: dataConfig.password,
     database: dataConfig.database,
-    entities: ['dist/**/*.entity.js'],
+    entities: ['dist/**/*.entity.{ts,js}'],
     migrations: ['dist/modules/database/migrations/*.js'],
     migrationsTableName: 'migrations',
     synchronize: false,

@@ -9,8 +9,5 @@ interface UserCreatedType {
 @Injectable()
 export class UserCreatedListener {
   @OnEvent('command.user.created')
-  handleOrderCreatedEvent(payload: UserCreatedType) {
-    // handle and process "OrderCreatedEvent" event
-    console.log(event);
-  }
+  handleOrderCreatedEvent(payload: UserCreatedType) {}
 }

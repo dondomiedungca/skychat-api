@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:create": "npm run build && typeorm migration:create",
+    "migration:create": "npm run build && typeorm migration:create ./src/modules/database/migrations/%npm_config_name%",
     "migration:development:up": "npm run build && typeorm -d dist/modules/database/datasource.development.js migration:run",
     "migration:development:down": "npm run build && typeorm -d dist/modules/database/datasource.development.js migration:revert",
     "migration:staging:up": "npm run build && typeorm -d dist/modules/database/datasource.staging.js migration:run",
@@ -29,6 +29,7 @@
     "create:keypair": "npm run build && node cli create-keypair"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
@@ -39,8 +40,11 @@
     "@squareboat/nest-console": "^1.1.1",
     "bcrypt": "^5.1.0",
     "crypto": "^1.0.1",
+    "handlebars": "^4.7.7",
+    "joi": "^17.9.0",
     "moment-timezone": "^0.5.41",
     "nest-commander": "^3.6.1",
+    "nodemailer": "^6.9.1",
     "pg": "^8.10.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.5",

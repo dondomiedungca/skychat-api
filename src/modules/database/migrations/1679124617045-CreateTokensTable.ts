@@ -6,7 +6,7 @@ export class CreateTokensTable1679124617045 implements MigrationInterface {
             CREATE TABLE tokens (
                 id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
                 user_id uuid REFERENCES users (id) ON DELETE CASCADE,
-                token_hash VARCHAR ( 100 ) NOT NULL
+                hashed_token VARCHAR ( 100 ) NOT NULL
             );
         `);
   }

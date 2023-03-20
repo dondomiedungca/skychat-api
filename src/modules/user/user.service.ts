@@ -9,14 +9,18 @@ import { User } from './entities/user.entity';
 import { ConfigService } from '../config/config.service';
 import { UserRepository } from './user.repository';
 import { TokenType } from './../../types/config.type';
-import { RolesType } from './../../types/roles.type';
+import { TokenService } from '../token/token.service';
+import { TokenRepository } from '../token/token.repository';
+import { Role } from './entities/role.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     private eventEmitter: EventEmitter2,
     private readonly userRepository: UserRepository,
+    private readonly tokenRepository: TokenRepository,
     private readonly configService: ConfigService,
+    private readonly tokenService: TokenService,
   ) {}
 
   create(createUserDto: CreateUserDto) {
@@ -41,28 +45,34 @@ export class UserService {
 
   async createUserFromCommand(
     user: Partial<User>,
-    role: RolesType,
+    role: string,
   ): Promise<void> {
     const tokenConfig: TokenType = this.configService.get('token');
 
     const salt = bcrypt.genSaltSync(tokenConfig.saltRound);
     const hash = bcrypt.hashSync(user.password, salt);
 
+    const selectedRole = await this.userRepository.getRole(role);
+
     const data: Partial<User> = {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       password: hash,
+      roles: [selectedRole],
       created_at: moment.utc().toDate(),
       updated_at: moment.utc().toDate(),
     };
 
+    const hashed = this.tokenService.generateHash(user.email);
+
     const payload = {
       email: user.email,
-      hash: 'test hash',
+      hash: hashed,
     };
 
-    await this.userRepository.create(data, role);
+    const createdUser = await this.userRepository.create(data);
+    await this.tokenRepository.saveHash(hashed, createdUser, createdUser.email);
 
     this.eventEmitter.emit('command.user.created', payload);
   }

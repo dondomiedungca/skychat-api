@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { Role } from './role.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -31,4 +38,18 @@ export class User {
 
   @Column()
   deleted_at?: Date;
+
+  @ManyToMany(() => Role, { onDelete: 'CASCADE', eager: true })
+  @JoinTable({
+    name: 'user_role',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'role_id',
+      referencedColumnName: 'id',
+    },
+  })
+  roles: Role[];
 }

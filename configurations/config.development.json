@@ -1,4 +1,5 @@
 {
+  "environment": "development",
   "PORT": 3005,
   "token": {
     "saltRound": 10,

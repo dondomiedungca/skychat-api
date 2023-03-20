@@ -1,21 +1,31 @@
 import { RolesType } from './../../types/roles.type';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { User } from './entities/user.entity';
+import { Role } from './entities/role.entity';
 
 @Injectable()
 export class UserRepository {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @Inject('CONNECTION') private readonly connection: DataSource,
   ) {}
 
   findByEmail(email: string): Promise<User> {
     return this.userRepository.findOneBy({ email });
   }
 
-  create(data: Partial<User>, role: RolesType): Promise<User> {
+  create(data: Partial<User>): Promise<User> {
     return this.userRepository.save(data);
+  }
+
+  getRole(name: string): Promise<Role> {
+    return this.connection
+      .getRepository(Role)
+      .createQueryBuilder('roles')
+      .where('roles.name = :name', { name })
+      .getOne();
   }
 }

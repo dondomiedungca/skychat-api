@@ -112,7 +112,7 @@ export class CreateUser {
         email,
         password,
       },
-      role,
+      role as any,
     );
 
     _cli.success(

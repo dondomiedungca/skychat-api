@@ -1,23 +1,23 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateActivationTable1679217145538 implements MigrationInterface {
+export class CreateUserRoleTable1679318092086 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            CREATE TABLE activations (
+            CREATE TABLE user_role (
                 id serial PRIMARY KEY,
                 user_id uuid REFERENCES users (id) ON DELETE CASCADE,
-                email VARCHAR ( 100 ) NOT NULL,
-                hash VARCHAR ( 100 ) NOT NULL
+                role_id integer REFERENCES roles (id)
             );
         `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE activations 
-   DROP CONSTRAINT activations_user_id_fkey; 
+            ALTER TABLE user_role 
+   DROP CONSTRAINT user_role_user_id_fkey; 
+   DROP CONSTRAINT user_role_role_id_fkey; 
    
-            DROP TABLE IF EXISTS activations;
+            DROP TABLE IF EXISTS user_role;
         `);
   }
 }

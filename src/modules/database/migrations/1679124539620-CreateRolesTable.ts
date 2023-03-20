@@ -8,6 +8,9 @@ export class CreateRolesTable1679124539620 implements MigrationInterface {
                 id serial PRIMARY KEY,
                 name VARCHAR ( 100 ) UNIQUE NOT NULL
             );
+
+            INSERT INTO roles(name) 
+            VALUES(unnest(array['Admin', 'Normal User']));
         `);
   }
 

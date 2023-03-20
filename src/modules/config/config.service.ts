@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigType } from 'src/types/config.type';
+import configSchema from './schema';
 
 @Injectable()
 export class ConfigService {
@@ -13,6 +14,13 @@ export class ConfigService {
     let config = require(`./../../../configurations/config.${
       env || process.env.NODE_ENV || 'development'
     }.json`);
+
+    (async () => {
+      await configSchema.validateAsync(config).catch((e) => {
+        throw new Error(e);
+      });
+    })();
+
     return config;
   }
 
