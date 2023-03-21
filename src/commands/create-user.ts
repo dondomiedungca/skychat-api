@@ -78,7 +78,7 @@ export class CreateUser {
     );
 
     while (!password) {
-      password = await _cli.password('Enter the password');
+      password = await _cli.ask('Enter the password');
       if (!password) {
         _cli.error('Password is required.');
       }
@@ -93,7 +93,7 @@ export class CreateUser {
     }
 
     while (!confirm_password) {
-      confirm_password = await _cli.password('Re-enter the password');
+      confirm_password = await _cli.ask('Re-enter the password');
       if (!confirm_password) {
         _cli.error('Re-entering password is required.');
       }
@@ -115,9 +115,7 @@ export class CreateUser {
       role as any,
     );
 
-    _cli.success(
-      'User successfuly created. We sent you an email verification. Activate now and you are ready to login!! 😀',
-    );
+    _cli.success('User successfuly created. You can now use the account. 😀');
 
     return;
   }

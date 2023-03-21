@@ -1,6 +1,8 @@
 import * as Joi from 'joi';
 
 export default Joi.object({
+  APP_URL: Joi.string(),
+  APP_TITLE: Joi.string(),
   environment: Joi.string().required(),
   PORT: Joi.number().min(1000).max(9999).required(),
   token: {
@@ -8,6 +10,16 @@ export default Joi.object({
     exp: {
       days: Joi.number().required(),
       hours: Joi.number().required(),
+    },
+  },
+  mail: {
+    port: Joi.number().required(),
+    host: Joi.string().required(),
+    secure: Joi.boolean().required(),
+    from: Joi.string().required(),
+    auth: {
+      user: Joi.string().required(),
+      pass: Joi.string().required(),
     },
   },
   database: {

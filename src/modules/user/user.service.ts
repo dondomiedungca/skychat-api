@@ -60,20 +60,11 @@ export class UserService {
       email: user.email,
       password: hash,
       roles: [selectedRole],
+      verified_at: moment.utc().toDate(),
       created_at: moment.utc().toDate(),
       updated_at: moment.utc().toDate(),
     };
 
-    const hashed = this.tokenService.generateHash(user.email);
-
-    const payload = {
-      email: user.email,
-      hash: hashed,
-    };
-
-    const createdUser = await this.userRepository.create(data);
-    await this.tokenRepository.saveHash(hashed, createdUser, createdUser.email);
-
-    this.eventEmitter.emit('command.user.created', payload);
+    await this.userRepository.create(data);
   }
 }

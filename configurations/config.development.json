@@ -1,11 +1,23 @@
 {
+  "APP_URL": "http://localhost:3005",
+  "APP_TITLE": "SkyChat",
   "environment": "development",
-  "PORT": 3005,
+  "PORT": 5000,
   "token": {
     "saltRound": 10,
     "exp": {
       "days": 14,
       "hours": 12
+    }
+  },
+  "mail": {
+    "port": 2525,
+    "host": "sandbox.smtp.mailtrap.io",
+    "secure": false,
+    "from": "test@example.com",
+    "auth": {
+      "user": "72a2649dd56dc6",
+      "pass": "5f233bc8b82731"
     }
   },
   "database": {

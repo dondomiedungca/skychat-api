@@ -10,6 +10,7 @@ import DatabaseModule from './modules/database/database.module';
 import { CreateUser } from './commands/create-user';
 import { CreateKeypair } from './commands/create-keypair';
 import { TokenModule } from './modules/token/token.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TokenModule } from './modules/token/token.module';
     TokenModule,
     UserModule,
     ConsoleModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService, CreateUser, CreateKeypair],
