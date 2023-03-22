@@ -4,13 +4,13 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from './modules/config/config.module';
+import { ConfigModule } from './modules/base/config/config.module';
 import { UserModule } from './modules/user/user.module';
-import DatabaseModule from './modules/database/database.module';
+import DatabaseModule from './modules/base/database/database.module';
 import { CreateUser } from './commands/create-user';
 import { CreateKeypair } from './commands/create-keypair';
 import { TokenModule } from './modules/token/token.module';
-import { MailModule } from './modules/mail/mail.module';
+import { MailModule } from './modules/base/mail/mail.module';
 
 @Module({
   imports: [

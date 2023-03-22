@@ -1,4 +1,4 @@
-import { DatabaseEnv } from './../../types/database.type';
+import { DatabaseEnv } from './../../../types/database.type';
 import { Module, Global } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceDevelopmentOptions } from './datasource.development';

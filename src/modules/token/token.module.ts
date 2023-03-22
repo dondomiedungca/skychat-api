@@ -4,7 +4,7 @@ import { TokenController } from './token.controller';
 import { TokenRepository } from './token.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Token } from './entities/token.entity';
-import DatabaseModule from '../database/database.module';
+import DatabaseModule from '../base/database/database.module';
 import { Activations } from './entities/activations.entity';
 
 @Global()

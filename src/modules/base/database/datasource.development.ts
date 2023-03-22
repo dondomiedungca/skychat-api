@@ -1,5 +1,5 @@
 import { initializeOptions } from './datasource.main';
-import { DatabaseEnv } from './../../types/database.type';
+import { DatabaseEnv } from './../../../types/database.type';
 import { DataSource } from 'typeorm';
 
 export const dataSourceDevelopmentOptions = initializeOptions(

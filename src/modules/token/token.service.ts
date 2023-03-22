@@ -3,7 +3,7 @@ import { CreateTokenDto } from './dto/create-token.dto';
 import { UpdateTokenDto } from './dto/update-token.dto';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
-import { ConfigService } from '../config/config.service';
+import { ConfigService } from '../base/config/config.service';
 
 @Injectable()
 export class TokenService {

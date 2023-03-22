@@ -6,7 +6,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { ConfigService } from '../config/config.service';
+import { ConfigService } from '../base/config/config.service';
 import { UserRepository } from './user.repository';
 import { TokenType } from './../../types/config.type';
 import { TokenService } from '../token/token.service';

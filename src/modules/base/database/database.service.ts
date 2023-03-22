@@ -1,4 +1,4 @@
-import { DatabaseEnv } from './../../types/database.type';
+import { DatabaseEnv } from './../../../types/database.type';
 import { Injectable } from '@nestjs/common';
 
 import dataSourceDevelopment from './datasource.development';
