@@ -1,20 +1,11 @@
 import {
   Controller,
-<<<<<<< HEAD
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-=======
   Post,
   Body,
   Get,
   ClassSerializerInterceptor,
   UseInterceptors,
   UseGuards,
->>>>>>> feature-1
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthUserDto, AuthReturnDto } from './dto/auth-user.dto';

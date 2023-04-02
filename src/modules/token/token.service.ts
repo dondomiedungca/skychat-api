@@ -44,8 +44,7 @@ export class TokenService {
   getPrivatekey(): string {
     const environment: string = this.configService.get('environment');
     return fs.readFileSync(
-      __dirname +
-        `/../../../configurations/keys/private.${environment}.key.pem`,
+      `${process.cwd()}/configurations/keys/private.${environment}.key.pem`,
       { encoding: 'utf8' },
     );
   }
@@ -53,7 +52,7 @@ export class TokenService {
   getPublickey(): string {
     const environment: string = this.configService.get('environment');
     return fs.readFileSync(
-      __dirname + `/../../../configurations/keys/public.${environment}.key.pem`,
+      `${process.cwd()}/configurations/keys/public.${environment}.key.pem`,
       { encoding: 'utf8' },
     );
   }
