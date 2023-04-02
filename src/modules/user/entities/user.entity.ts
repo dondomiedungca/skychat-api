@@ -6,9 +6,14 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Role } from './role.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'users' })
 export class User {
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -22,6 +27,7 @@ export class User {
   email: string;
 
   @Column({ name: 'password' })
+  @Exclude()
   password: string;
 
   @Column()

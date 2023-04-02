@@ -1,42 +1,39 @@
 import {
   Controller,
+<<<<<<< HEAD
   Get,
   Post,
   Body,
   Patch,
   Param,
   Delete,
+=======
+  Post,
+  Body,
+  Get,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+  UseGuards,
+>>>>>>> feature-1
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthUserDto, AuthReturnDto } from './dto/auth-user.dto';
+import { User } from './entities/user.entity';
+import { AuthGuard } from 'src/guards/auth.guard';
 
-@Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Post('/authenticate')
+  authenticate(@Body() authUserDto: AuthUserDto): Promise<AuthReturnDto> {
+    return this.userService.authenticate(authUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Get('/get-all-users')
+  @UseGuards(AuthGuard)
+  getAllUsers(): Promise<User[]> {
+    return this.userService.getAllUsers();
   }
 }
