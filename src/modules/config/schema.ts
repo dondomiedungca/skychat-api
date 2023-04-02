@@ -5,10 +5,20 @@ export default Joi.object({
   PORT: Joi.number().min(1000).max(9999).required(),
   token: {
     saltRound: Joi.number().min(1).max(10).required(),
-    exp: {
-      days: Joi.number().required(),
-      hours: Joi.number().required(),
-    },
+    exp: Joi.object({
+      access: Joi.object({
+        months: Joi.number().required(),
+        days: Joi.number().required(),
+        hours: Joi.number().required(),
+        minutes: Joi.number().required(),
+      }),
+      refresh: Joi.object({
+        months: Joi.number().required(),
+        days: Joi.number().required(),
+        hours: Joi.number().required(),
+        minutes: Joi.number().required(),
+      }),
+    }),
   },
   database: {
     type: Joi.string().required(),

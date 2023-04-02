@@ -1,47 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { AuthReturnDto, AuthUserDto } from './dto/auth-user.dto';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment-timezone';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { ConfigService } from '../config/config.service';
 import { UserRepository } from './user.repository';
 import { TokenType } from './../../types/config.type';
 import { TokenService } from '../token/token.service';
 import { TokenRepository } from '../token/token.repository';
-import { Role } from './entities/role.entity';
+import { GeneratedTokenReturnDto } from '../token/dto/generated-token-return.dto';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UserService {
   constructor(
+    @Inject('CONNECTION') private readonly connection: DataSource,
     private eventEmitter: EventEmitter2,
     private readonly userRepository: UserRepository,
     private readonly tokenRepository: TokenRepository,
     private readonly configService: ConfigService,
     private readonly tokenService: TokenService,
   ) {}
-
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
-
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
 
   async createUserFromCommand(
     user: Partial<User>,
@@ -75,5 +56,41 @@ export class UserService {
     await this.tokenRepository.saveHash(hashed, createdUser, createdUser.email);
 
     this.eventEmitter.emit('command.user.created', payload);
+  }
+
+  async authenticate(authUserDto: AuthUserDto): Promise<AuthReturnDto> {
+    const attemptedUser = await this.userRepository.findByEmail(
+      authUserDto.email,
+    );
+
+    if (attemptedUser) {
+      if (!attemptedUser.verified_at) {
+        throw new HttpException(
+          'User is not yet verified',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      const isMatch = await bcrypt.compare(
+        authUserDto.password,
+        attemptedUser.password,
+      );
+
+      if (isMatch) {
+        const generatedToken: GeneratedTokenReturnDto =
+          await this.tokenService.generateAuthToken(attemptedUser);
+
+        return generatedToken;
+      }
+    }
+
+    throw new HttpException('Incorrect credentials', HttpStatus.FORBIDDEN);
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return this.connection
+      .getRepository(User)
+      .createQueryBuilder('roles')
+      .getMany();
   }
 }
