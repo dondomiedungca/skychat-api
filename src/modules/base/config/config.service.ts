@@ -25,8 +25,8 @@ export class ConfigService {
   }
 
   public get(property: string, env?: string) {
-    if (!!env) {
-      this.load(env);
+    if (!!env || process.env.NODE_ENV) {
+      this.config = this.load(env);
     }
     return this.config[property];
   }
