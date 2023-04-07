@@ -14,7 +14,7 @@ export const initializeOptions = (env: string): DataSourceOptions => {
     password: dataConfig.password,
     database: dataConfig.database,
     entities: ['dist/**/*.entity.{ts,js}'],
-    migrations: ['dist/modules/database/migrations/*.js'],
+    migrations: ['dist/**/migrations/*.js'],
     migrationsTableName: 'migrations',
     synchronize: false,
   };
