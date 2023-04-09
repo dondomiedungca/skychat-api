@@ -1,8 +1,8 @@
 {
-  "APP_URL": "http://localhost:3005",
+  "APP_URL": "http://localhost:3000",
   "APP_TITLE": "SkyChat",
   "environment": "development",
-  "PORT": 5000,
+  "PORT": 3000,
   "token": {
     "saltRound": 10,
     "exp": {
