@@ -26,9 +26,15 @@ export class User {
   @Column({ name: 'email' })
   email: string;
 
+  @Column({ name: 'google_id' })
+  googleId: string;
+
+  @Column({ name: 'picture' })
+  picture: string;
+
   @Column({ name: 'password' })
   @Exclude()
-  password: string;
+  password?: string;
 
   @Column()
   created_at: Date;

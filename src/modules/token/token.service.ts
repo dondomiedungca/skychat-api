@@ -10,15 +10,19 @@ import { ConfigService } from '../base/config/config.service';
 import { User } from '../user/entities/user.entity';
 import { GeneratedTokenReturnDto } from './dto/generated-token-return.dto';
 import { TokenType } from 'src/types/config.type';
+import { TokenRepository } from './token.repository';
 
 @Injectable()
 export class TokenService {
   private privateKey;
   private publicKey;
 
-  constructor(private readonly configService: ConfigService) {
-    this.privateKey = this.getPrivatekey();
-    this.publicKey = this.getPublickey();
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly tokenRepository: TokenRepository,
+  ) {
+    this.privateKey = this.tokenRepository.getPrivatekey();
+    this.publicKey = this.tokenRepository.getPublickey();
   }
 
   create(createTokenDto: CreateTokenDto) {
@@ -41,24 +45,8 @@ export class TokenService {
     return `This action removes a #${id} token`;
   }
 
-  getPrivatekey(): string {
-    const environment: string = this.configService.get('environment');
-    return fs.readFileSync(
-      `${process.cwd()}/configurations/keys/private.${environment}.key.pem`,
-      { encoding: 'utf8' },
-    );
-  }
-
-  getPublickey(): string {
-    const environment: string = this.configService.get('environment');
-    return fs.readFileSync(
-      `${process.cwd()}/configurations/keys/public.${environment}.key.pem`,
-      { encoding: 'utf8' },
-    );
-  }
-
   generateHash(payload: any): string {
-    const secret = this.getPrivatekey();
+    const secret = this.tokenRepository.getPrivatekey();
 
     const hmac = crypto
       .createHmac('sha256', secret)
@@ -104,6 +92,9 @@ export class TokenService {
       algorithm: 'RS256',
       expiresIn: accessTokenExp.diff(moment.utc(), 'milliseconds'),
     });
+
+    // save the refresh token for validating the token and generating new acccess token
+    await this.tokenRepository.saveRefreshToken(refreshToken, user);
 
     return {
       accessToken,

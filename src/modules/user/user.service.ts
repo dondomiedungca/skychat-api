@@ -1,8 +1,10 @@
+import { GoogleSigninDto } from './dto/google-signin.dto';
 import { AuthReturnDto, AuthUserDto } from './dto/auth-user.dto';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment-timezone';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import axios from 'axios';
 
 import { User } from './entities/user.entity';
 import { ConfigService } from '../base/config/config.service';
@@ -12,6 +14,7 @@ import { TokenService } from '../token/token.service';
 import { TokenRepository } from '../token/token.repository';
 import { GeneratedTokenReturnDto } from '../token/dto/generated-token-return.dto';
 import { DataSource } from 'typeorm';
+import { RolesType } from 'src/types/roles.type';
 
 @Injectable()
 export class UserService {
@@ -83,5 +86,42 @@ export class UserService {
       .getRepository(User)
       .createQueryBuilder('roles')
       .getMany();
+  }
+
+  async signinWithGoogle({ token }: GoogleSigninDto): Promise<AuthReturnDto> {
+    const response = await axios.get(
+      'https://www.googleapis.com/userinfo/v2/me',
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
+    if (response.status === 200) {
+      const role = await this.userRepository.getRole(RolesType.NORMAL_USER);
+
+      const user = {
+        firstName: response.data.given_name,
+        lastName: response.data.family_name,
+        email: response.data.email,
+        googleId: response.data.id,
+        picture: response.data.picture,
+        roles: [role],
+        verified_at: moment.utc().toDate(),
+        created_at: moment.utc().toDate(),
+        updated_at: moment.utc().toDate(),
+      };
+
+      const createdUser = await this.userRepository.create(user);
+
+      const generatedToken: GeneratedTokenReturnDto =
+        await this.tokenService.generateAuthToken(createdUser);
+
+      return generatedToken;
+    }
+
+    throw new HttpException(
+      "Error on getting user's primary google information",
+      HttpStatus.FORBIDDEN,
+    );
   }
 }
