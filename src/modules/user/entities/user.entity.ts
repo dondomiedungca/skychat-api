@@ -33,7 +33,7 @@ export class User {
   picture: string;
 
   @Column({ name: 'password' })
-  @Exclude()
+  @Exclude({ toPlainOnly: true })
   password?: string;
 
   @Column()

@@ -10,13 +10,15 @@
         "months": 0,
         "days": 0,
         "hours": 0,
-        "minutes": 15
+        "minutes": 1,
+        "seconds": 0
       },
       "refresh": {
-        "months": 0,
-        "days": 14,
+        "months": 12,
+        "days": 0,
         "hours": 0,
-        "minutes": 0
+        "minutes": 0,
+        "seconds": 0
       }
     }
   },

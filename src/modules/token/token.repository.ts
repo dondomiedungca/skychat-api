@@ -7,7 +7,6 @@ import * as fs from 'fs';
 import { Activations } from './entities/activations.entity';
 import { User } from '../user/entities/user.entity';
 import { Token } from './entities/token.entity';
-import { TokenService } from './token.service';
 import { ConfigService } from '../base/config/config.service';
 
 @Injectable()
@@ -60,5 +59,9 @@ export class TokenRepository {
     };
 
     return this.tokenRepository.save(token);
+  }
+
+  async findByHashed(hashed_token: string): Promise<Token> {
+    return this.tokenRepository.findOneBy({ hashed_token });
   }
 }

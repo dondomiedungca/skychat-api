@@ -17,6 +17,15 @@ export class UserRepository {
     return this.userRepository.findOneBy({ email });
   }
 
+  findById(id: string): Promise<User> {
+    return this.connection
+      .getRepository(User)
+      .createQueryBuilder('users')
+      .leftJoinAndSelect('users.roles', 'roles')
+      .where('users.id = :id', { id })
+      .getOne();
+  }
+
   create(data: Partial<User>): Promise<User> {
     return this.userRepository.save(data);
   }
