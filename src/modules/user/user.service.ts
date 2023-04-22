@@ -99,7 +99,7 @@ export class UserService {
     if (response.status === 200) {
       const role = await this.userRepository.getRole(RolesType.NORMAL_USER);
 
-      const user = {
+      const user: Partial<User> = {
         firstName: response.data.given_name,
         lastName: response.data.family_name,
         email: response.data.email,
@@ -111,7 +111,9 @@ export class UserService {
         updated_at: moment.utc().toDate(),
       };
 
-      const createdUser = await this.userRepository.create(user);
+      const createdUser = await this.userRepository.findOrCreate(user, [
+        'email',
+      ]);
 
       const generatedToken: GeneratedTokenReturnDto =
         await this.tokenService.generateAuthToken(createdUser);

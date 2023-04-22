@@ -37,4 +37,36 @@ export class UserRepository {
       .where('roles.name = :name', { name })
       .getOne();
   }
+
+  async findOrCreate(
+    user: Partial<User>,
+    keys: Array<keyof Partial<User>>,
+  ): Promise<User> {
+    const query = this.connection
+      .getRepository(User)
+      .createQueryBuilder('users')
+      .leftJoinAndSelect('users.roles', 'roles');
+
+    let values = {};
+    let whereClause: string | string[] = [];
+
+    if (keys.length) {
+      keys.map((property) => {
+        values = {
+          ...values,
+          [property]: user[property],
+        };
+        whereClause = [...whereClause, `users.${property} = :${property}`];
+      });
+      whereClause = whereClause.join(' AND ');
+    }
+
+    const getUserByEmail = await query.where(whereClause, values).getOne();
+
+    if (!!getUserByEmail) {
+      return getUserByEmail;
+    }
+
+    return this.create(user);
+  }
 }

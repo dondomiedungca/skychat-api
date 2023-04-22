@@ -14,9 +14,7 @@ export class CreateActivationTable1679217145538 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE activations 
-   DROP CONSTRAINT activations_user_id_fkey; 
-   
+            ALTER TABLE activations DROP CONSTRAINT activations_user_id_fkey; 
             DROP TABLE IF EXISTS activations;
         `);
   }

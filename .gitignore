@@ -403,3 +403,5 @@ data/pg/*
 /configurations/keys/*.pem
 
 *.code-workspace
+
+/src/modules/base/database/migrations/*.test.ts

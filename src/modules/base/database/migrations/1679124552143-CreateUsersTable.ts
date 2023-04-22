@@ -7,7 +7,7 @@ export class CreateUsersTable1679124552143 implements MigrationInterface {
                 id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
                 first_name VARCHAR ( 100 ) NOT NULL,
                 last_name VARCHAR ( 100 ) NOT NULL,
-                email VARCHAR ( 100 ) NOT NULL,
+                email VARCHAR ( 100 ) UNIQUE NOT NULL,
                 password VARCHAR ( 120 ) NOT NULL,
                 created_at TIMESTAMP WITH TIME ZONE,
                 updated_at TIMESTAMP WITH TIME ZONE,

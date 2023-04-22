@@ -10,10 +10,6 @@ import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'users' })
 export class User {
-  constructor(partial: Partial<User>) {
-    Object.assign(this, partial);
-  }
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -27,10 +23,10 @@ export class User {
   email: string;
 
   @Column({ name: 'google_id' })
-  googleId: string;
+  googleId?: string;
 
   @Column({ name: 'picture' })
-  picture: string;
+  picture?: string;
 
   @Column({ name: 'password' })
   @Exclude({ toPlainOnly: true })

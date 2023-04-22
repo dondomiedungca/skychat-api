@@ -8,9 +8,9 @@
     "exp": {
       "access": {
         "months": 0,
-        "days": 0,
+        "days": 15,
         "hours": 0,
-        "minutes": 1,
+        "minutes": 0,
         "seconds": 0
       },
       "refresh": {

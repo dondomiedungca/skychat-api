@@ -13,9 +13,7 @@ export class CreateTokensTable1679124617045 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE tokens 
-   DROP CONSTRAINT tokens_user_id_fkey; 
-   
+            ALTER TABLE tokens DROP CONSTRAINT tokens_user_id_fkey; 
             DROP TABLE IF EXISTS tokens;
         `);
   }
