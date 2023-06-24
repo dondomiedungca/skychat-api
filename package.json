@@ -26,9 +26,7 @@
     "migration:production:up": "npm run build && typeorm -d dist/modules/base/database/datasource.production.js migration:run",
     "migration:production:down": "npm run build && typeorm -d dist/modules/base/database/datasource.production.js migration:revert",
     "create:user": "npm run build && node cli create-user",
-    "create:keypair": "npm run build && node cli create-keypair",
-    "seed:config": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
-    "seed:run": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js -n datasource.development.js -r dist/modules/base/database/ seed"
+    "create:keypair": "npm run build && node cli create-keypair"
   },
   "dependencies": {
     "@apollo/server": "^4.5.0",

@@ -22,11 +22,8 @@ export class User {
   @Column({ name: 'email' })
   email: string;
 
-  @Column({ name: 'google_id' })
-  googleId?: string;
-
-  @Column({ name: 'picture' })
-  picture?: string;
+  @Column({ name: 'user_meta' })
+  user_meta?: string;
 
   @Column({ name: 'password' })
   @Exclude({ toPlainOnly: true })

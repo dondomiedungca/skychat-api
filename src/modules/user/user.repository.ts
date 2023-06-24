@@ -6,6 +6,15 @@ import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Role } from './entities/role.entity';
 
+interface ColumnFinder<T> {
+  type: 'JSON' | 'ARRAY';
+  condition: '=' | '!=' | '>' | '>=' | '<' | '<=' | 'LIKE' | 'ILIKE' | 'NOT IN';
+  column: keyof T;
+  property: string;
+  value: any;
+  valueType: any;
+}
+
 @Injectable()
 export class UserRepository {
   constructor(
@@ -40,7 +49,7 @@ export class UserRepository {
 
   async findOrCreate(
     user: Partial<User>,
-    keys: Array<keyof Partial<User>>,
+    keys: Array<keyof Partial<User> | ColumnFinder<User>>,
   ): Promise<User> {
     const query = this.connection
       .getRepository(User)
@@ -51,12 +60,20 @@ export class UserRepository {
     let whereClause: string | string[] = [];
 
     if (keys.length) {
-      keys.map((property) => {
-        values = {
-          ...values,
-          [property]: user[property],
-        };
-        whereClause = [...whereClause, `users.${property} = :${property}`];
+      keys.map((key) => {
+        if (typeof key === 'string') {
+          values = {
+            ...values,
+            [key]: user[key],
+          };
+          whereClause = [...whereClause, `users.${key} = :${key}`];
+        }
+        if (typeof key === 'object') {
+          whereClause = [
+            ...whereClause,
+            `(${key.column} ->> '${key.property}')::${key.valueType} ${key.condition} ${key.value}`,
+          ];
+        }
       });
       whereClause = whereClause.join(' AND ');
     }
@@ -67,6 +84,9 @@ export class UserRepository {
       return getUserByEmail;
     }
 
-    return this.create(user);
+    let created = await this.create(user);
+    created = { ...created, user_meta: JSON.parse(created.user_meta) };
+
+    return created;
   }
 }

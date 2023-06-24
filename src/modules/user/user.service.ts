@@ -103,8 +103,10 @@ export class UserService {
         firstName: response.data.given_name,
         lastName: response.data.family_name,
         email: response.data.email,
-        googleId: response.data.id,
-        picture: response.data.picture,
+        user_meta: JSON.stringify({
+          profile_photo: response.data.picture,
+          google_id: response.data.id,
+        }),
         roles: [role],
         verified_at: moment.utc().toDate(),
         created_at: moment.utc().toDate(),
@@ -113,6 +115,14 @@ export class UserService {
 
       const createdUser = await this.userRepository.findOrCreate(user, [
         'email',
+        {
+          type: 'JSON',
+          condition: '=',
+          column: 'user_meta',
+          property: 'google_id',
+          value: response.data.id,
+          valueType: 'numeric',
+        },
       ]);
 
       const generatedToken: GeneratedTokenReturnDto =

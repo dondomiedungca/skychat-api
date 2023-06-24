@@ -43,7 +43,7 @@ export class TokenService {
       sub: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
-      picture: user.picture,
+      user_meta: user.user_meta,
       email: user.email,
       roles: user.roles,
     };
