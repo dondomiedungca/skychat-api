@@ -2,8 +2,9 @@ import { RolesType } from './../../types/roles.type';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import * as moment from 'moment';
 
-import { User } from './entities/user.entity';
+import { User, UserMeta } from './entities/user.entity';
 import { Role } from './entities/role.entity';
 
 interface ColumnFinder<T> {
@@ -81,6 +82,24 @@ export class UserRepository {
     const getUserByEmail = await query.where(whereClause, values).getOne();
 
     if (!!getUserByEmail) {
+      const old_meta = getUserByEmail?.user_meta as unknown as UserMeta;
+      const new_user_meta = {
+        ...(old_meta || {}),
+        activity: {
+          ...old_meta.activity,
+          lastActive: moment.utc().toDate(),
+          isActive: true,
+        },
+      };
+
+      await this.connection
+        .getRepository(User)
+        .createQueryBuilder('users')
+        .update(User)
+        .set({ user_meta: JSON.stringify(new_user_meta) })
+        .where('id = :id', { id: getUserByEmail.id })
+        .execute();
+
       return getUserByEmail;
     }
 

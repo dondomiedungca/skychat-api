@@ -14,7 +14,10 @@ export class AuthGuard implements CanActivate {
     if (token) {
       try {
         const verify = this.tokenService.verifyToken(token);
-        if (!!verify) return true;
+        if (!!verify) {
+          request.currentUser = verify;
+          return true;
+        }
       } catch (error) {
         return false;
       }

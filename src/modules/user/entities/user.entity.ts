@@ -8,6 +8,18 @@ import {
 import { Role } from './role.entity';
 import { Exclude } from 'class-transformer';
 
+export interface UserActivity {
+  showActivity?: boolean;
+  isActive?: boolean;
+  lastActive?: Date;
+}
+
+export interface UserMeta {
+  google_id?: string;
+  profile_photo?: string;
+  activity?: UserActivity;
+}
+
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
