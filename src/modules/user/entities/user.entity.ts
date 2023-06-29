@@ -4,9 +4,12 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { Exclude } from 'class-transformer';
+import { Conversation } from 'src/modules/conversation/entities/conversation.entity';
+import { Chat } from 'src/modules/chats/entities/chat.entity';
 
 export interface UserActivity {
   showActivity?: boolean;
@@ -69,4 +72,24 @@ export class User {
     },
   })
   roles: Role[];
+
+  @ManyToMany(() => Conversation, (conversation) => conversation.users, {
+    onDelete: 'SET NULL',
+    eager: false,
+  })
+  @JoinTable({
+    name: 'users_conversations',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'conversation_id',
+      referencedColumnName: 'id',
+    },
+  })
+  conversations: Conversation[];
+
+  @OneToMany(() => Chat, (chat) => chat.user)
+  chats: Chat[];
 }

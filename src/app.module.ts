@@ -19,6 +19,10 @@ import { CreateKeypair } from './commands/create-keypair';
 import { TokenModule } from './modules/token/token.module';
 import { MailModule } from './modules/base/mail/mail.module';
 import { JWTParserMiddleware } from './middlewares/JWTParser.middleware';
+import { ConversationModule } from './modules/conversation/conversation.module';
+import { ChatsModule } from './modules/chats/chats.module';
+import { ConversationController } from './modules/conversation/conversation.controller';
+import { ChatsController } from './modules/chats/chats.controller';
 
 @Module({
   imports: [
@@ -29,6 +33,8 @@ import { JWTParserMiddleware } from './middlewares/JWTParser.middleware';
     UserModule,
     ConsoleModule,
     MailModule,
+    ConversationModule,
+    ChatsModule,
   ],
   controllers: [AppController],
   providers: [AppService, CreateUser, CreateKeypair],
@@ -38,6 +44,11 @@ export class AppModule implements NestModule {
     consumer
       .apply(JWTParserMiddleware)
       .exclude({ path: 'users/authenticate', method: RequestMethod.POST })
-      .forRoutes(UserController, TokenController);
+      .forRoutes(
+        UserController,
+        TokenController,
+        ConversationController,
+        ChatsController,
+      );
   }
 }

@@ -21,6 +21,7 @@ import jwtDecode from 'jwt-decode';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { Token } from '../token/entities/token.entity';
 import { JwtPayload } from 'jsonwebtoken';
+import { Conversation } from '../conversation/entities/conversation.entity';
 
 @Injectable()
 export class UserService {
@@ -95,13 +96,12 @@ export class UserService {
     search?: string;
     page: number;
     currentUser: JwtPayload;
-  }): Promise<User[]> {
+  }) {
     const take = 10;
     const skip = (page - 1) * take;
 
     return this.connection
-      .getRepository(User)
-      .createQueryBuilder('users')
+      .createQueryBuilder(User, 'user')
       .where('id != :id', { id: currentUser.sub })
       .orderBy('created_at', 'DESC')
       .take(take)
