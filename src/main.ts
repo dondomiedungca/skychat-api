@@ -4,6 +4,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from './modules/base/config/config.service';
 import helmet from 'helmet';
+import { AuthenticatedSocketAdapter } from './authenticated-socket-adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
