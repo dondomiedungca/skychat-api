@@ -16,17 +16,17 @@ export class UsersConversations {
   @Column({ name: 'display_name' })
   display_name: string;
 
-  @OneToOne(() => User, {
-    eager: true,
-  })
+  @OneToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  public user: User;
+  user: User;
 
-  @OneToOne(() => User, {
-    eager: true,
-  })
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'related_to' })
+  related_to: User;
+
+  @OneToOne(() => Conversation)
   @JoinColumn({ name: 'conversation_id' })
-  public conversation: Conversation;
+  conversation: Conversation;
 
   @Column()
   deleted_at: Date;

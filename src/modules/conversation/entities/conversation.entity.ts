@@ -3,10 +3,12 @@ import { User } from 'src/modules/user/entities/user.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UsersConversations } from './users-conversations.entity';
 
 export interface ConversationMeta {
   type: 'personal' | 'group';
@@ -30,6 +32,13 @@ export class Conversation {
 
   @OneToMany(() => Chat, (chat) => chat.conversation)
   chats?: Chat[];
+
+  @OneToMany(
+    () => UsersConversations,
+    (usersConversations) => usersConversations.conversation,
+  )
+  @JoinColumn({ name: 'conversation_id' })
+  users_conversations: UsersConversations;
 
   @Column()
   created_at: Date;

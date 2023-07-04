@@ -49,7 +49,7 @@ export class ConversationService {
     return `This action removes a #${id} conversation`;
   }
 
-  async getConverrationByParties({
+  async getConversationByParties({
     parties,
     type,
   }: {

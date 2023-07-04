@@ -8,8 +8,9 @@ export class CreateUsersConversationsTable1687952733352
             CREATE TABLE users_conversations (
                 id serial PRIMARY KEY,
                 display_name TEXT NOT NULL,
-                conversation_id integer REFERENCES conversations (id) ON DELETE CASCADE,
+                conversation_id uuid REFERENCES conversations (id) ON DELETE CASCADE,
                 user_id uuid REFERENCES users (id) ON DELETE CASCADE,
+                related_to uuid REFERENCES users (id) ON DELETE CASCADE,
                 deleted_at TIMESTAMP WITH TIME ZONE
             );
         `);

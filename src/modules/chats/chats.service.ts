@@ -22,25 +22,37 @@ export class ChatsService {
     @InjectRepository(Chat) private readonly chatRepository: Repository<Chat>,
   ) {}
 
-  async create(createChatDto: CreateChatDto, currentUser: JwtPayload) {
+  async create(
+    createChatDto: CreateChatDto,
+    currentUser: JwtPayload,
+  ): Promise<Conversation> {
     const targetUserId = createChatDto.parties.find(
       (el) => el !== currentUser.sub,
     );
 
-    let chat: Chat;
+    let conversation: Conversation;
+    const currentUserObject = await this.userRepository.findById(
+      currentUser.sub,
+    );
+    const targetUser = await this.userRepository.findById(targetUserId);
 
     if (createChatDto.conversation_id) {
-    } else {
-      const currentUserObject = await this.userRepository.findById(
-        currentUser.sub,
-      );
-      const targetUser = await this.userRepository.findById(targetUserId);
+      conversation = await this.connection
+        .createQueryBuilder(Conversation, 'conversation')
+        .where('conversation.id = :id', { id: createChatDto.conversation_id })
+        .getOne();
 
-      let conversation: Conversation =
-        await this.conversationService.getConverrationByParties({
-          parties: createChatDto.parties,
-          type: 'personal',
-        });
+      await this.chatRepository.save({
+        user: currentUserObject,
+        text: createChatDto.msg.text,
+        conversation,
+        chat_meta: JSON.stringify(createChatDto.msg),
+      });
+    } else {
+      conversation = await this.conversationService.getConversationByParties({
+        parties: createChatDto.parties,
+        type: 'personal',
+      });
 
       let targetUserJunction: UsersConversations = await this.connection
         .createQueryBuilder(UsersConversations, 'user_conversations')
@@ -77,20 +89,22 @@ export class ChatsService {
         });
 
         targetUserJunction = new UsersConversations();
-        targetUserJunction.display_name = `${currentUserObject.firstName} ${currentUserObject.lastName}`;
+        targetUserJunction.display_name = `${targetUser.firstName} ${targetUser.lastName}`;
         targetUserJunction.user = targetUser;
+        targetUserJunction.related_to = currentUserObject;
         targetUserJunction.conversation = conversation;
 
         currentUserJunction = new UsersConversations();
-        currentUserJunction.display_name = `${targetUser.firstName} ${targetUser.lastName}`;
+        currentUserJunction.display_name = `${currentUserObject.firstName} ${currentUserObject.lastName}`;
         currentUserJunction.user = currentUserObject;
+        currentUserJunction.related_to = targetUser;
         currentUserJunction.conversation = conversation;
 
         await this.connection.manager.save(targetUserJunction);
         await this.connection.manager.save(currentUserJunction);
       }
 
-      chat = await this.chatRepository.save({
+      await this.chatRepository.save({
         user: currentUserObject,
         text: createChatDto.msg.text,
         conversation,
@@ -98,7 +112,7 @@ export class ChatsService {
       });
     }
 
-    return 'This action adds a new chat';
+    return conversation;
   }
 
   async findAll(fetchChatsDto: FetchChatsDto) {
@@ -107,7 +121,7 @@ export class ChatsService {
 
     if (!fetchChatsDto?.conversation_id) {
       const attemptConversation =
-        await this.conversationService.getConverrationByParties({
+        await this.conversationService.getConversationByParties({
           parties: fetchChatsDto.parties,
         });
 
@@ -117,13 +131,21 @@ export class ChatsService {
           .where('chats.conversation_id = :conversation_id', {
             conversation_id: attemptConversation.id,
           })
-          .orderBy('id', 'DESC')
+          .orderBy("(chats.chat_meta ->> 'createdAt')::timestamp", 'DESC')
           .take(take)
           .skip(skip)
           .getMany();
       }
     }
-    return [];
+    return this.connection
+      .createQueryBuilder(Chat, 'chats')
+      .where('chats.conversation_id = :conversation_id', {
+        conversation_id: fetchChatsDto.conversation_id,
+      })
+      .orderBy("(chats.chat_meta ->> 'createdAt')::timestamp", 'DESC')
+      .take(take)
+      .skip(skip)
+      .getMany();
   }
 
   findOne(id: number) {

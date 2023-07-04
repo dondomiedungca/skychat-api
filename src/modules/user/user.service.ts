@@ -101,9 +101,16 @@ export class UserService {
     const skip = (page - 1) * take;
 
     return this.connection
-      .createQueryBuilder(User, 'user')
-      .where('id != :id', { id: currentUser.sub })
-      .orderBy('created_at', 'DESC')
+      .createQueryBuilder(User, 'users')
+      .leftJoinAndSelect(
+        'users.users_conversations',
+        'uc',
+        'uc.related_to = :currentUserId',
+        { currentUserId: currentUser.sub },
+      )
+      .leftJoinAndSelect('uc.conversation', 'conversation')
+      .where('users.id != :id', { id: currentUser.sub })
+      .orderBy('users.created_at', 'DESC')
       .take(take)
       .skip(skip)
       .getMany();

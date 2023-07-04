@@ -5,11 +5,14 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { Exclude } from 'class-transformer';
 import { Conversation } from 'src/modules/conversation/entities/conversation.entity';
 import { Chat } from 'src/modules/chats/entities/chat.entity';
+import { UsersConversations } from 'src/modules/conversation/entities/users-conversations.entity';
 
 export interface UserActivity {
   showActivity?: boolean;
@@ -92,4 +95,11 @@ export class User {
 
   @OneToMany(() => Chat, (chat) => chat.user)
   chats: Chat[];
+
+  @OneToMany(
+    () => UsersConversations,
+    (usersConversations) => usersConversations.user,
+  )
+  @JoinColumn({ name: 'user_id' })
+  users_conversations: UsersConversations[];
 }
