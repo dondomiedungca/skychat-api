@@ -40,4 +40,15 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     socket.to(payload.conversation_id).emit('receiveChat', payload.msg);
   }
+
+  @SubscribeMessage('onUserKeyUp')
+  public async onUserKeyUp(
+    @MessageBody() payload: any,
+    @ConnectedSocket() socket: Socket,
+  ) {
+    const room = socket.handshake.query?.conversation_id;
+    if (room) {
+      socket.to(room).emit('onUserKeyUp', payload);
+    }
+  }
 }
