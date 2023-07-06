@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsArray,
   IsOptional,
+  IsBoolean,
 } from 'class-validator';
 
 export class FetchChatsDto {
@@ -20,7 +21,10 @@ export class FetchChatsDto {
   search?: string;
 
   @IsNotEmpty()
-  page: number;
+  currentLength: number;
+
+  @IsOptional()
+  allChat?: number;
 }
 
 @Injectable()

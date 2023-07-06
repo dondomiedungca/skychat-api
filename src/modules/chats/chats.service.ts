@@ -116,8 +116,10 @@ export class ChatsService {
   }
 
   async findAll(fetchChatsDto: FetchChatsDto) {
-    const take = 100;
-    const skip = ((fetchChatsDto?.page || 0) - 1) * take;
+    const take = 15;
+    const skip = fetchChatsDto.currentLength;
+    let allchat = fetchChatsDto.allChat;
+    let chats: Chat[];
 
     if (!fetchChatsDto?.conversation_id) {
       const attemptConversation =
@@ -125,8 +127,17 @@ export class ChatsService {
           parties: fetchChatsDto.parties,
         });
 
+      if (!allchat) {
+        allchat = await this.connection
+          .createQueryBuilder(Chat, 'chats')
+          .where('chats.conversation_id = :conversation_id', {
+            conversation_id: attemptConversation.id,
+          })
+          .getCount();
+      }
+
       if (!!attemptConversation) {
-        return this.connection
+        chats = await this.connection
           .createQueryBuilder(Chat, 'chats')
           .where('chats.conversation_id = :conversation_id', {
             conversation_id: attemptConversation.id,
@@ -137,7 +148,15 @@ export class ChatsService {
           .getMany();
       }
     }
-    return this.connection
+    if (!allchat) {
+      allchat = await this.connection
+        .createQueryBuilder(Chat, 'chats')
+        .where('chats.conversation_id = :conversation_id', {
+          conversation_id: fetchChatsDto.conversation_id,
+        })
+        .getCount();
+    }
+    chats = await this.connection
       .createQueryBuilder(Chat, 'chats')
       .where('chats.conversation_id = :conversation_id', {
         conversation_id: fetchChatsDto.conversation_id,
@@ -146,6 +165,11 @@ export class ChatsService {
       .take(take)
       .skip(skip)
       .getMany();
+
+    return {
+      chats,
+      allchat,
+    };
   }
 
   findOne(id: number) {

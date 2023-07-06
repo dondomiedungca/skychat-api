@@ -22,10 +22,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleConnection(@ConnectedSocket() socket: Socket) {
     const conversation_id = socket.handshake.query?.conversation_id;
     if (!!conversation_id && conversation_id != 'undefined') {
-      console.log('create new room', conversation_id);
       socket.join(conversation_id);
-    } else {
-      console.log('simple connection');
     }
   }
 
@@ -38,7 +35,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() payload: any,
     @ConnectedSocket() socket: Socket,
   ) {
-    socket.to(payload.conversation_id).emit('receiveChat', payload.msg);
+    this.server.to(payload.conversation_id).emit('receiveChat', payload.msg);
   }
 
   @SubscribeMessage('onUserKeyUp')
