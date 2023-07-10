@@ -37,8 +37,7 @@ export class Conversation {
     () => UsersConversations,
     (usersConversations) => usersConversations.conversation,
   )
-  @JoinColumn({ name: 'conversation_id' })
-  users_conversations: UsersConversations;
+  users_conversations: UsersConversations[];
 
   @Column()
   created_at: Date;

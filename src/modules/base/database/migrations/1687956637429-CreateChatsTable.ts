@@ -9,6 +9,7 @@ export class CreateChatsTable1687956637429 implements MigrationInterface {
                 conversation_id uuid REFERENCES conversations (id) ON DELETE CASCADE,
                 text TEXT NULL,
                 chat_meta jsonb NULL,
+                readed_at TIMESTAMP WITH TIME ZONE,
                 deleted_at TIMESTAMP WITH TIME ZONE,
                 deleted_by uuid REFERENCES users (id) ON DELETE CASCADE
             );

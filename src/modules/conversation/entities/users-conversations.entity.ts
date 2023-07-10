@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -24,7 +25,10 @@ export class UsersConversations {
   @JoinColumn({ name: 'related_to' })
   related_to: User;
 
-  @OneToOne(() => Conversation)
+  @ManyToOne(
+    () => Conversation,
+    (conversation) => conversation.users_conversations,
+  )
   @JoinColumn({ name: 'conversation_id' })
   conversation: Conversation;
 

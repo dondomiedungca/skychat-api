@@ -118,7 +118,7 @@ export class ChatsService {
   async findAll(fetchChatsDto: FetchChatsDto) {
     const take = 15;
     const skip = fetchChatsDto.currentLength;
-    let allchat = fetchChatsDto.allChat;
+    let allchat = fetchChatsDto.allChat || 0;
     let chats: Chat[];
 
     if (!fetchChatsDto?.conversation_id) {
@@ -128,12 +128,14 @@ export class ChatsService {
         });
 
       if (!allchat) {
-        allchat = await this.connection
-          .createQueryBuilder(Chat, 'chats')
-          .where('chats.conversation_id = :conversation_id', {
-            conversation_id: attemptConversation.id,
-          })
-          .getCount();
+        if (!!attemptConversation) {
+          allchat = await this.connection
+            .createQueryBuilder(Chat, 'chats')
+            .where('chats.conversation_id = :conversation_id', {
+              conversation_id: attemptConversation.id,
+            })
+            .getCount();
+        }
       }
 
       if (!!attemptConversation) {

@@ -7,11 +7,15 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
+import { JwtPayload } from 'jsonwebtoken';
+import { CurrentUser } from 'src/decorators/user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { ConversationService } from './conversation.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
-import { FetchConversationsDto } from './dto/fetch-conversation';
+import { FetchConversationsDto } from './dto/fetch-conversation.dto';
+import { FetchRecentDto } from './dto/fetch-recent-conversation.dto';
 import { UpdateConversationDto } from './dto/update-conversation.dto';
 
 @Controller('conversation')
@@ -27,6 +31,18 @@ export class ConversationController {
   @Get('/fetch-conversations')
   findAll(@Body() fetchConversation: FetchConversationsDto) {
     return this.conversationService.findAll(fetchConversation);
+  }
+
+  @Get('/fetch-recent-conversations')
+  fetchRecent(
+    @CurrentUser() currentUser: JwtPayload,
+    @Query('page') page: number,
+    @Query('search') search?: string,
+  ) {
+    return this.conversationService.fetchRecentConversation(
+      { page, search },
+      currentUser,
+    );
   }
 
   @Get(':id')
