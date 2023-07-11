@@ -46,6 +46,7 @@ export class TokenService {
       user_meta: user.user_meta,
       email: user.email,
       roles: user.roles,
+      createdAt: user.created_at,
     };
 
     const refreshToken = this.generateRefreshToken(payload);
@@ -117,6 +118,7 @@ export class TokenService {
             lastName: user.lastName,
             email: user.email,
             roles: user.roles,
+            createdAt: user.created_at,
           };
 
           const accessToken = this.generateAccessToken(payload);

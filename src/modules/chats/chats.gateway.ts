@@ -21,9 +21,8 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleConnection(@ConnectedSocket() socket: Socket) {
     const conversation_id = socket.handshake.query?.conversation_id;
-    if (!!conversation_id && conversation_id != 'undefined') {
-      socket.join(conversation_id);
-    }
+    console.log('joining room :', conversation_id);
+    socket.join(conversation_id);
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
