@@ -37,6 +37,9 @@ export class Chat {
   @Column({ name: 'readed_at' })
   readed_at?: Date;
 
+  @Column({ name: 'created_at' })
+  created_at?: Date;
+
   @Column({ name: 'deleted_at' })
   deleted_at?: Date;
 

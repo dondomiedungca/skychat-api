@@ -14,6 +14,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Conversation } from '../conversation/entities/conversation.entity';
+import { UsersConversations } from '../conversation/entities/users-conversations.entity';
 import { ChatsService } from './chats.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { FetchChatsDto, PaginationTransformPipe } from './dto/fetch-chats.dto';
@@ -28,7 +29,7 @@ export class ChatsController {
   create(
     @CurrentUser() currentUser: JwtPayload,
     @Body() createChatDto: CreateChatDto,
-  ): Promise<Conversation> {
+  ): Promise<UsersConversations> {
     return this.chatsService.create(createChatDto, currentUser);
   }
 

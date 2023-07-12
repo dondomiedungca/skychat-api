@@ -57,11 +57,11 @@ export class ConversationService {
       }, 'unread')
       .addSelect((subQuery) => {
         return subQuery
-          .select("(c.chat_meta ->> 'text')::text")
+          .select('c.text')
           .from(Chat, 'c')
           .where('c.conversation_id = users_conversations.conversation_id')
           .andWhere('c.readed_at IS NULL')
-          .orderBy("(c.chat_meta ->> 'createdAt')::timestamp", 'DESC')
+          .orderBy('c.created_at', 'DESC')
           .limit(1);
       }, 'lastMessage')
       .addSelect((subQuery) => {
@@ -70,16 +70,16 @@ export class ConversationService {
           .from(Chat, 'c')
           .where('c.conversation_id = users_conversations.conversation_id')
           .andWhere('c.readed_at IS NULL')
-          .orderBy("(c.chat_meta ->> 'createdAt')::timestamp", 'DESC')
+          .orderBy('c.created_at', 'DESC')
           .limit(1);
       }, 'lastUser')
       .addSelect((subQuery) => {
         return subQuery
-          .select("(c.chat_meta ->> 'createdAt')::text")
+          .select('c.created_at')
           .from(Chat, 'c')
           .where('c.conversation_id = users_conversations.conversation_id')
           .andWhere('c.readed_at IS NULL')
-          .orderBy("(c.chat_meta ->> 'createdAt')::timestamp", 'DESC')
+          .orderBy('c.created_at', 'DESC')
           .limit(1);
       }, 'lastDateTime')
       .leftJoinAndSelect('users_conversations.conversation', 'conversation')

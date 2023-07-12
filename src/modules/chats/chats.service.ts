@@ -25,12 +25,13 @@ export class ChatsService {
   async create(
     createChatDto: CreateChatDto,
     currentUser: JwtPayload,
-  ): Promise<Conversation> {
+  ): Promise<UsersConversations> {
     const targetUserId = createChatDto.parties.find(
       (el) => el !== currentUser.sub,
     );
 
     let conversation: Conversation;
+    let targetUserJunction: UsersConversations;
     const currentUserObject = await this.userRepository.findById(
       currentUser.sub,
     );
@@ -42,11 +43,22 @@ export class ChatsService {
         .where('conversation.id = :id', { id: createChatDto.conversation_id })
         .getOne();
 
+      targetUserJunction = await this.connection
+        .createQueryBuilder(UsersConversations, 'user_conversations')
+        .select('user_conversations.*')
+        .leftJoinAndSelect('user_conversations.conversation', 'conversation')
+        .where(
+          'user_id = :targetUserId AND conversation_id = :conversation_id',
+          { targetUserId, conversation_id: conversation?.id },
+        )
+        .getOne();
+
       await this.chatRepository.save({
         user: currentUserObject,
-        text: createChatDto.msg.text,
+        text: createChatDto.payload.text,
         conversation,
-        chat_meta: JSON.stringify(createChatDto.msg),
+        chat_meta: JSON.stringify(createChatDto.payload.chat_meta),
+        created_at: moment(createChatDto.payload.created_at).utc().toDate(),
       });
     } else {
       conversation = await this.conversationService.getConversationByParties({
@@ -54,7 +66,7 @@ export class ChatsService {
         type: 'personal',
       });
 
-      let targetUserJunction: UsersConversations = await this.connection
+      targetUserJunction = await this.connection
         .createQueryBuilder(UsersConversations, 'user_conversations')
         .select('user_conversations.*')
         .where(
@@ -106,13 +118,14 @@ export class ChatsService {
 
       await this.chatRepository.save({
         user: currentUserObject,
-        text: createChatDto.msg.text,
+        text: createChatDto.payload.text,
         conversation,
-        chat_meta: JSON.stringify(createChatDto.msg),
+        chat_meta: JSON.stringify(createChatDto.payload.chat_meta),
+        created_at: moment(createChatDto.payload.created_at).utc().toDate(),
       });
     }
 
-    return conversation;
+    return targetUserJunction;
   }
 
   async findAll(fetchChatsDto: FetchChatsDto) {
@@ -144,7 +157,7 @@ export class ChatsService {
           .where('chats.conversation_id = :conversation_id', {
             conversation_id: attemptConversation.id,
           })
-          .orderBy("(chats.chat_meta ->> 'createdAt')::timestamp", 'DESC')
+          .orderBy('chats.created_at', 'DESC')
           .take(take)
           .skip(skip)
           .getMany();
@@ -163,7 +176,7 @@ export class ChatsService {
       .where('chats.conversation_id = :conversation_id', {
         conversation_id: fetchChatsDto.conversation_id,
       })
-      .orderBy("(chats.chat_meta ->> 'createdAt')::timestamp", 'DESC')
+      .orderBy('chats.created_at', 'DESC')
       .take(take)
       .skip(skip)
       .getMany();
