@@ -18,7 +18,7 @@ interface UpdatePartnerReels {
   data: UsersConversations;
 }
 
-@WebSocketGateway({ namespace: 'users' })
+@WebSocketGateway()
 @Injectable()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()

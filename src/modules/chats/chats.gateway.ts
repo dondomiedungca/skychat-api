@@ -23,7 +23,7 @@ interface CreateChatData {
   conversation_id?: string;
 }
 
-@WebSocketGateway({ namespace: 'chats' })
+@WebSocketGateway()
 @Injectable()
 export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
