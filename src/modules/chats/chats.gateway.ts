@@ -23,7 +23,7 @@ interface CreateChatData {
   conversation_id?: string;
 }
 
-@WebSocketGateway({ namespace: 'chats' })
+@WebSocketGateway()
 @Injectable()
 export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -31,41 +31,45 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleConnection(@ConnectedSocket() socket: Socket) {
     const conversation_id = socket.handshake.query?.conversation_id;
-    console.log('joining room :', conversation_id);
-    socket.join(conversation_id);
+    if (conversation_id !== 'undefined' && conversation_id !== undefined) {
+      console.log('joining room :', conversation_id);
+      socket.join(conversation_id);
+    }
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     console.log('disconnected');
   }
 
-  @SubscribeMessage('sendChat')
+  @SubscribeMessage('chat-sendChat')
   public async sendChat(
     @MessageBody() data: CreateChatData,
     @ConnectedSocket() socket: Socket,
   ) {
-    this.server.to(data.conversation_id).emit('receiveChat', data.data.payload);
+    this.server
+      .to(data.conversation_id)
+      .emit('chat-receiveChat', data.data.payload);
   }
 
-  @SubscribeMessage('onUserKeyUp')
+  @SubscribeMessage('chat-onUserKeyUp')
   public async onUserKeyUp(
     @MessageBody() data: boolean,
     @ConnectedSocket() socket: Socket,
   ) {
     const room = socket.handshake.query?.conversation_id;
     if (room) {
-      socket.to(room).emit('onUserKeyUp', data);
+      socket.to(room).emit('chat-onUserKeyUp', data);
     }
   }
 
-  @SubscribeMessage('onNewConversationId')
+  @SubscribeMessage('chat-onNewConversationId')
   public async onNewConversationId(
     @MessageBody() data: boolean,
     @ConnectedSocket() socket: Socket,
   ) {
     const room = socket.handshake.query?.conversation_id;
     if (room) {
-      this.server.to(room).emit('onNewConversationId', data);
+      this.server.to(room).emit('chat-onNewConversationId', data);
     }
   }
 }

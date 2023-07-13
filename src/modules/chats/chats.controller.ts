@@ -29,7 +29,10 @@ export class ChatsController {
   create(
     @CurrentUser() currentUser: JwtPayload,
     @Body() createChatDto: CreateChatDto,
-  ): Promise<UsersConversations> {
+  ): Promise<{
+    targetUserJunction: UsersConversations;
+    currentUserJunction: UsersConversations;
+  }> {
     return this.chatsService.create(createChatDto, currentUser);
   }
 

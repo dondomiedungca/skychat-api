@@ -25,13 +25,17 @@ export class ChatsService {
   async create(
     createChatDto: CreateChatDto,
     currentUser: JwtPayload,
-  ): Promise<UsersConversations> {
+  ): Promise<{
+    targetUserJunction: UsersConversations;
+    currentUserJunction: UsersConversations;
+  }> {
     const targetUserId = createChatDto.parties.find(
       (el) => el !== currentUser.sub,
     );
 
     let conversation: Conversation;
     let targetUserJunction: UsersConversations;
+    let currentUserJunction: UsersConversations;
     const currentUserObject = await this.userRepository.findById(
       currentUser.sub,
     );
@@ -45,11 +49,22 @@ export class ChatsService {
 
       targetUserJunction = await this.connection
         .createQueryBuilder(UsersConversations, 'user_conversations')
-        .select('user_conversations.*')
         .leftJoinAndSelect('user_conversations.conversation', 'conversation')
         .where(
-          'user_id = :targetUserId AND conversation_id = :conversation_id',
-          { targetUserId, conversation_id: conversation?.id },
+          'user_conversations.user_id = :targetUserId AND user_conversations.conversation_id = :conversation_id',
+          {
+            targetUserId,
+            conversation_id: conversation?.id,
+          },
+        )
+        .getOne();
+
+      currentUserJunction = await this.connection
+        .createQueryBuilder(UsersConversations, 'user_conversations')
+        .leftJoinAndSelect('user_conversations.conversation', 'conversation')
+        .where(
+          'user_id = :currentUserId AND conversation_id = :conversation_id',
+          { currentUserId: currentUser.sub, conversation_id: conversation?.id },
         )
         .getOne();
 
@@ -68,15 +83,13 @@ export class ChatsService {
 
       targetUserJunction = await this.connection
         .createQueryBuilder(UsersConversations, 'user_conversations')
-        .select('user_conversations.*')
         .where(
           'user_id = :targetUserId AND conversation_id = :conversation_id',
           { targetUserId, conversation_id: conversation?.id },
         )
         .getOne();
-      let currentUserJunction: UsersConversations = await this.connection
+      currentUserJunction = await this.connection
         .createQueryBuilder(UsersConversations, 'user_conversations')
-        .select('user_conversations.*')
         .where(
           'user_id = :currentUserId AND conversation_id = :conversation_id',
           { currentUserId: currentUser.sub, conversation_id: conversation?.id },
@@ -125,7 +138,7 @@ export class ChatsService {
       });
     }
 
-    return targetUserJunction;
+    return { targetUserJunction, currentUserJunction };
   }
 
   async findAll(fetchChatsDto: FetchChatsDto) {

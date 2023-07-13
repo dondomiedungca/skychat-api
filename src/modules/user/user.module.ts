@@ -8,12 +8,13 @@ import { UserRepository } from './user.repository';
 // Listeners
 import { UserCreatedListener } from './listeners/UserCreatedListener';
 import { Role } from './entities/role.entity';
+import { UserGateway } from './user.gateway';
 
 @Global()
 @Module({
   imports: [TypeOrmModule.forFeature([User, Role])],
   controllers: [UserController],
-  providers: [UserService, UserRepository, UserCreatedListener],
+  providers: [UserService, UserRepository, UserCreatedListener, UserGateway],
   exports: [UserService, UserRepository],
 })
 export class UserModule {}
