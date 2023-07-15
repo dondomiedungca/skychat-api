@@ -60,7 +60,7 @@ export class ConversationService {
           .select('c.text')
           .from(Chat, 'c')
           .where('c.conversation_id = users_conversations.conversation_id')
-          .andWhere('c.readed_at IS NULL')
+          .andWhere('c.deleted_at IS NULL')
           .orderBy('c.created_at', 'DESC')
           .limit(1);
       }, 'lastMessage')
@@ -69,7 +69,7 @@ export class ConversationService {
           .select("(c.chat_meta #> '{user,_id}')::text")
           .from(Chat, 'c')
           .where('c.conversation_id = users_conversations.conversation_id')
-          .andWhere('c.readed_at IS NULL')
+          .andWhere('c.deleted_at IS NULL')
           .orderBy('c.created_at', 'DESC')
           .limit(1);
       }, 'lastUser')
@@ -78,7 +78,7 @@ export class ConversationService {
           .select('c.created_at')
           .from(Chat, 'c')
           .where('c.conversation_id = users_conversations.conversation_id')
-          .andWhere('c.readed_at IS NULL')
+          .andWhere('c.deleted_at IS NULL')
           .orderBy('c.created_at', 'DESC')
           .limit(1);
       }, 'lastDateTime')
@@ -88,7 +88,26 @@ export class ConversationService {
       .where('users_conversations.related_to = :id', { id: currentUser.sub })
       .andWhere('users_conversations.deleted_at IS NULL')
       .getRawMany();
-    return query;
+
+    const new_data = await Promise.all(
+      query.map(async (data) => {
+        const initial_chats = await this.connection
+          .createQueryBuilder(Chat, 'chats')
+          .where('chats.conversation_id = :conversation_id', {
+            conversation_id: data.conversation_id,
+          })
+          .orderBy('chats.created_at', 'DESC')
+          .limit(15)
+          .getMany();
+
+        return {
+          ...data,
+          initial_chats,
+        };
+      }),
+    );
+
+    return new_data;
   }
 
   findOne(id: number) {

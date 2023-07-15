@@ -46,8 +46,8 @@ export class UserService {
     const selectedRole = await this.userRepository.getRole(role);
 
     const data: Partial<User> = {
-      firstName: user.firstName,
-      lastName: user.lastName,
+      first_name: user.first_name,
+      last_name: user.last_name,
       email: user.email,
       password: hash,
       roles: [selectedRole],
@@ -128,14 +128,14 @@ export class UserService {
       const role = await this.userRepository.getRole(RolesType.NORMAL_USER);
 
       const user: Partial<User> = {
-        firstName: response.data.given_name,
-        lastName: response.data.family_name,
+        first_name: response.data.given_name,
+        last_name: response.data.family_name,
         email: response.data.email,
         user_meta: JSON.stringify({
           activity: {
-            showActivity: true,
-            lastActive: moment.utc().toDate(),
-            isActive: true,
+            show_activity: true,
+            last_active: moment.utc().toDate(),
+            is_active: true,
           },
           profile_photo: response.data.picture,
           google_id: response.data.id,
@@ -197,8 +197,8 @@ export class UserService {
             ...(old_meta || {}),
             activity: {
               ...old_meta?.activity,
-              lastActive: moment.utc().toDate(),
-              isActive: false,
+              last_active: moment.utc().toDate(),
+              is_active: false,
             },
           };
 

@@ -21,7 +21,7 @@ export class MailService {
       subject: `Welcome to ${appTitle}. Confirm your Email`,
       template: './confirmation',
       context: {
-        firstName: user.firstName,
+        first_name: user.first_name,
         verificationUrl: url,
       },
     });

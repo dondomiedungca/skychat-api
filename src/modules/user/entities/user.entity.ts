@@ -15,9 +15,9 @@ import { Chat } from 'src/modules/chats/entities/chat.entity';
 import { UsersConversations } from 'src/modules/conversation/entities/users-conversations.entity';
 
 export interface UserActivity {
-  showActivity?: boolean;
-  isActive?: boolean;
-  lastActive?: Date;
+  show_activity?: boolean;
+  is_active?: boolean;
+  last_active?: Date;
 }
 
 export interface UserMeta {
@@ -32,10 +32,10 @@ export class User {
   id: string;
 
   @Column({ name: 'first_name' })
-  firstName: string;
+  first_name: string;
 
   @Column({ name: 'last_name' })
-  lastName: string;
+  last_name: string;
 
   @Column({ name: 'email' })
   email: string;

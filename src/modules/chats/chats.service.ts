@@ -12,6 +12,7 @@ import { ConversationService } from '../conversation/conversation.service';
 import { Chat, ConversationMeta } from './entities/chat.entity';
 import { UsersConversations } from '../conversation/entities/users-conversations.entity';
 import { Conversation } from '../conversation/entities/conversation.entity';
+import { UpdateUnreadDto } from './dto/update-unread.dto';
 
 @Injectable()
 export class ChatsService {
@@ -28,6 +29,7 @@ export class ChatsService {
   ): Promise<{
     targetUserJunction: UsersConversations;
     currentUserJunction: UsersConversations;
+    chat: Chat;
   }> {
     const targetUserId = createChatDto.parties.find(
       (el) => el !== currentUser.sub,
@@ -36,6 +38,7 @@ export class ChatsService {
     let conversation: Conversation;
     let targetUserJunction: UsersConversations;
     let currentUserJunction: UsersConversations;
+    let createdChat: Chat;
     const currentUserObject = await this.userRepository.findById(
       currentUser.sub,
     );
@@ -68,7 +71,7 @@ export class ChatsService {
         )
         .getOne();
 
-      await this.chatRepository.save({
+      createdChat = await this.chatRepository.save({
         user: currentUserObject,
         text: createChatDto.payload.text,
         conversation,
@@ -101,8 +104,8 @@ export class ChatsService {
           type: 'personal',
           parties_id: createChatDto.parties,
           parties_name: [
-            `${currentUserObject.firstName} ${currentUserObject.lastName}`,
-            `${targetUser.firstName} ${targetUser.lastName}`,
+            `${currentUserObject.first_name} ${currentUserObject.last_name}`,
+            `${targetUser.first_name} ${targetUser.last_name}`,
           ],
         };
 
@@ -114,13 +117,13 @@ export class ChatsService {
         });
 
         targetUserJunction = new UsersConversations();
-        targetUserJunction.display_name = `${targetUser.firstName} ${targetUser.lastName}`;
+        targetUserJunction.display_name = `${targetUser.first_name} ${targetUser.last_name}`;
         targetUserJunction.user = targetUser;
         targetUserJunction.related_to = currentUserObject;
         targetUserJunction.conversation = conversation;
 
         currentUserJunction = new UsersConversations();
-        currentUserJunction.display_name = `${currentUserObject.firstName} ${currentUserObject.lastName}`;
+        currentUserJunction.display_name = `${currentUserObject.first_name} ${currentUserObject.last_name}`;
         currentUserJunction.user = currentUserObject;
         currentUserJunction.related_to = targetUser;
         currentUserJunction.conversation = conversation;
@@ -129,7 +132,7 @@ export class ChatsService {
         await this.connection.manager.save(currentUserJunction);
       }
 
-      await this.chatRepository.save({
+      createdChat = await this.chatRepository.save({
         user: currentUserObject,
         text: createChatDto.payload.text,
         conversation,
@@ -138,7 +141,7 @@ export class ChatsService {
       });
     }
 
-    return { targetUserJunction, currentUserJunction };
+    return { targetUserJunction, currentUserJunction, chat: createdChat };
   }
 
   async findAll(fetchChatsDto: FetchChatsDto) {
@@ -200,12 +203,24 @@ export class ChatsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chat`;
+  updateUnread(updateUnreadDto: UpdateUnreadDto) {
+    const { user_id, conversation_id } = updateUnreadDto;
+
+    this.connection
+      .createQueryBuilder()
+      .update(Chat)
+      .set({
+        readed_at: moment.utc().toDate(),
+      })
+      .where('user_id = :user_id AND conversation_id = :conversation_id', {
+        user_id,
+        conversation_id,
+      })
+      .execute();
   }
 
-  update(id: number, updateChatDto: UpdateChatDto) {
-    return `This action updates a #${id} chat`;
+  findOne(id: number) {
+    return `This action returns a #${id} chat`;
   }
 
   remove(id: number) {

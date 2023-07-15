@@ -9,6 +9,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Chat } from '../chats/entities/chat.entity';
 import { UsersConversations } from '../conversation/entities/users-conversations.entity';
 import { User } from './entities/user.entity';
 
@@ -18,7 +19,16 @@ interface UpdatePartnerReels {
   data: UsersConversations;
 }
 
-@WebSocketGateway()
+interface UpdateOwnRecents {
+  relatedUser: User;
+  channelUserId: string;
+  chat: Chat;
+  conversation_id: string;
+  conversation_type: string;
+  users_conversations: UsersConversations;
+}
+
+@WebSocketGateway({ namespace: 'users' })
 @Injectable()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -45,7 +55,23 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket,
   ) {
     const room = `ind#__${data.targetUser.id}`;
-    console.log(room);
     this.server.to(room).emit('user-updatePartnerReels', data);
+  }
+
+  @SubscribeMessage('user-updateOwnRecents')
+  public async updateOwnRecents(
+    @MessageBody() data: UpdateOwnRecents,
+    @ConnectedSocket() socket: Socket,
+  ) {
+    socket.emit('user-updateOwnRecents', data);
+  }
+
+  @SubscribeMessage('user-updatePartnerRecents')
+  public async updatePartnerRecents(
+    @MessageBody() data: UpdateOwnRecents,
+    @ConnectedSocket() socket: Socket,
+  ) {
+    const room = `ind#__${data.channelUserId}`;
+    this.server.to(room).emit('user-updatePartnerRecents', data);
   }
 }

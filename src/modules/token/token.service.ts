@@ -41,8 +41,8 @@ export class TokenService {
     const payload = {
       iat: moment.utc().valueOf(),
       sub: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      first_name: user.first_name,
+      last_name: user.last_name,
       user_meta: user.user_meta,
       email: user.email,
       roles: user.roles,
@@ -114,8 +114,8 @@ export class TokenService {
           const payload = {
             iat: moment.utc().valueOf(),
             sub: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            first_name: user.first_name,
+            last_name: user.last_name,
             email: user.email,
             roles: user.roles,
             createdAt: user.created_at,

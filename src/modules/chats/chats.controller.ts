@@ -9,6 +9,7 @@ import {
   Query,
   ValidationPipe,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { JwtPayload } from 'jsonwebtoken';
 import { CurrentUser } from 'src/decorators/user.decorator';
@@ -19,6 +20,8 @@ import { ChatsService } from './chats.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { FetchChatsDto, PaginationTransformPipe } from './dto/fetch-chats.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
+import { UpdateUnreadDto } from './dto/update-unread.dto';
+import { Chat } from './entities/chat.entity';
 
 @Controller('chat')
 export class ChatsController {
@@ -32,6 +35,7 @@ export class ChatsController {
   ): Promise<{
     targetUserJunction: UsersConversations;
     currentUserJunction: UsersConversations;
+    chat: Chat;
   }> {
     return this.chatsService.create(createChatDto, currentUser);
   }
@@ -49,9 +53,10 @@ export class ChatsController {
     return this.chatsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateChatDto: UpdateChatDto) {
-    return this.chatsService.update(+id, updateChatDto);
+  @Put('/update-unread')
+  @UseGuards(AuthGuard)
+  updateUnread(@Body() updateUnreadDto: UpdateUnreadDto) {
+    return this.chatsService.updateUnread(updateUnreadDto);
   }
 
   @Delete(':id')

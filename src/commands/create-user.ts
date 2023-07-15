@@ -20,8 +20,8 @@ export class CreateUser {
     _cli.info(`(NOTE: You should have atleast 1 admin user.\n`);
 
     let role: RolesType;
-    let firstName: string;
-    let lastName: string;
+    let first_name: string;
+    let last_name: string;
     let email: string;
     let password: string;
     let confirm_password: string;
@@ -38,16 +38,16 @@ export class CreateUser {
       }
     }
 
-    while (!firstName) {
-      firstName = await _cli.ask('What is the First name?');
-      if (!firstName) {
+    while (!first_name) {
+      first_name = await _cli.ask('What is the First name?');
+      if (!first_name) {
         _cli.error('First name is required.');
       }
     }
 
-    while (!lastName) {
-      lastName = await _cli.ask('What is the Last name?');
-      if (!lastName) {
+    while (!last_name) {
+      last_name = await _cli.ask('What is the Last name?');
+      if (!last_name) {
         _cli.error('Last name is required.');
       }
     }
@@ -107,8 +107,8 @@ export class CreateUser {
 
     await this.userService.createUserFromCommand(
       {
-        firstName,
-        lastName,
+        first_name,
+        last_name,
         email,
         password,
       },

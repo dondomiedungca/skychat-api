@@ -87,8 +87,8 @@ export class UserRepository {
         ...(old_meta || {}),
         activity: {
           ...old_meta.activity,
-          lastActive: moment.utc().toDate(),
-          isActive: true,
+          last_active: moment.utc().toDate(),
+          is_active: true,
         },
       };
 
