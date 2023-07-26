@@ -20,11 +20,9 @@ export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomId = socket.handshake.query?.roomId;
     const user_id = socket.handshake.query?.user_id;
     if (roomId !== 'undefined' && roomId !== undefined) {
-      console.log('joining call room ID :', roomId);
       socket.join(roomId);
     }
     if (user_id !== 'undefined' && user_id !== undefined) {
-      console.log('for waiting :', user_id);
       socket.join(`ind#__call__${user_id}`);
     }
   }
@@ -46,7 +44,7 @@ export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket,
   ) {
     const user_individual_id = `ind#__call__${data.partnerId}`;
-    socket.to(user_individual_id).emit('call-manualEnd');
+    this.server.to(user_individual_id).emit('call-manualEnd');
   }
 
   @SubscribeMessage('call-partnerManualEnd')
@@ -54,6 +52,25 @@ export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: any,
     @ConnectedSocket() socket: Socket,
   ) {
-    socket.to(data.roomId).emit('call-partnerManualEnd');
+    this.server.to(data.roomId).emit('call-partnerManualEnd');
+  }
+
+  @SubscribeMessage('call-addAnswer')
+  public async addAnswer(
+    @MessageBody() data: any,
+    @ConnectedSocket() socket: Socket,
+  ) {
+    this.server.to(data.roomId).emit('call-addAnswer', { answer: data.answer });
+  }
+
+  @SubscribeMessage('call-handleIceCandidate')
+  public async handleIceCandidate(
+    @MessageBody() data: any,
+    @ConnectedSocket() socket: Socket,
+  ) {
+    console.log(data);
+    this.server
+      .to(data.roomId)
+      .emit('call-handleIceCandidate', { candidate: data.candidate });
   }
 }
