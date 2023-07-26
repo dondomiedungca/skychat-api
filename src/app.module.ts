@@ -23,6 +23,7 @@ import { ConversationModule } from './modules/conversation/conversation.module';
 import { ChatsModule } from './modules/chats/chats.module';
 import { ConversationController } from './modules/conversation/conversation.controller';
 import { ChatsController } from './modules/chats/chats.controller';
+import { CallGateway } from './call.gateway';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import { ChatsController } from './modules/chats/chats.controller';
     ChatsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CreateUser, CreateKeypair],
+  providers: [AppService, CreateUser, CreateKeypair, CallGateway],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

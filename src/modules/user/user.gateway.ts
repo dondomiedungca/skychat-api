@@ -40,14 +40,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
       socket.handshake.query?.user_id !== 'undefined' &&
       socket.handshake.query?.user_id !== undefined
     ) {
-      console.log('individual user room :', user_id);
       socket.join(user_id);
     }
   }
 
-  handleDisconnect(@ConnectedSocket() socket: Socket) {
-    console.log('individual user room disconnected');
-  }
+  handleDisconnect(@ConnectedSocket() socket: Socket) {}
 
   @SubscribeMessage('user-updatePartnerReels')
   public async updatePartnerReels(

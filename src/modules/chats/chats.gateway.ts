@@ -32,14 +32,11 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleConnection(@ConnectedSocket() socket: Socket) {
     const conversation_id = socket.handshake.query?.conversation_id;
     if (conversation_id !== 'undefined' && conversation_id !== undefined) {
-      console.log('joining room :', conversation_id);
       socket.join(conversation_id);
     }
   }
 
-  handleDisconnect(@ConnectedSocket() socket: Socket) {
-    console.log('disconnected');
-  }
+  handleDisconnect(@ConnectedSocket() socket: Socket) {}
 
   @SubscribeMessage('chat-sendChat')
   public async sendChat(
