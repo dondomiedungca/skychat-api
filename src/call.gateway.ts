@@ -52,7 +52,7 @@ export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: any,
     @ConnectedSocket() socket: Socket,
   ) {
-    this.server.to(data.roomId).emit('call-partnerManualEnd');
+    socket.to(data.roomId).emit('call-partnerManualEnd');
   }
 
   @SubscribeMessage('call-addAnswer')
@@ -60,7 +60,7 @@ export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: any,
     @ConnectedSocket() socket: Socket,
   ) {
-    this.server.to(data.roomId).emit('call-addAnswer', { answer: data.answer });
+    socket.to(data.roomId).emit('call-addAnswer', { answer: data.answer });
   }
 
   @SubscribeMessage('call-handleIceCandidate')
@@ -69,7 +69,7 @@ export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket,
   ) {
     console.log(data);
-    this.server
+    socket
       .to(data.roomId)
       .emit('call-handleIceCandidate', { candidate: data.candidate });
   }
