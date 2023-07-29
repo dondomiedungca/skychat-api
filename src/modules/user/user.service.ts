@@ -22,6 +22,9 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { Token } from '../token/entities/token.entity';
 import { JwtPayload } from 'jsonwebtoken';
 import { Conversation } from '../conversation/entities/conversation.entity';
+import { PhoneSigninDto } from './dto/phone-signin.dto';
+import { Activations } from '../token/entities/activations.entity';
+import { TypeVerification, VerifyDto } from './dto/verify.dto';
 
 @Injectable()
 export class UserService {
@@ -168,6 +171,80 @@ export class UserService {
       "Error on getting user's primary google information",
       HttpStatus.FORBIDDEN,
     );
+  }
+
+  async signinWithPhone(phoneSigninDto: PhoneSigninDto): Promise<boolean> {
+    const { phone_number } = phoneSigninDto;
+    const checkNumber = await this.connection
+      .createQueryBuilder(Activations, 'activation')
+      .where('activation.phone_number = :phone_number', { phone_number })
+      .orderBy('activation.id', 'DESC')
+      .getOne();
+
+    if (!checkNumber) {
+      /**
+       * Create new activation with new code
+       */
+      const activation = new Activations();
+      activation.phone_number = phone_number;
+      activation.code = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+      this.connection.manager.save(activation);
+      /**
+       * TODO send new sms in here
+       */
+    } else {
+      const newCode = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+
+      checkNumber.code = newCode;
+      this.connection.manager.save(checkNumber);
+
+      /**
+       *TODO Now send new sms in here
+       */
+    }
+
+    return true;
+  }
+
+  async verifyCode(
+    verifyDto: VerifyDto,
+  ): Promise<{ is_verified: boolean; authTokens?: AuthReturnDto }> {
+    const { type, email, phone_number, code } = verifyDto;
+
+    const checkVerification = await this.connection
+      .createQueryBuilder(Activations, 'activations')
+      .leftJoinAndSelect('activations.user', 'user')
+      .where(
+        `${
+          type === TypeVerification.EMAIL
+            ? 'activations.email'
+            : 'activations.phone_number'
+        } = :category AND activations.code = :code`,
+        {
+          category: type === TypeVerification.EMAIL ? email : phone_number,
+          code,
+        },
+      )
+      .getOne();
+
+    if (!checkVerification) {
+      return {
+        is_verified: false,
+      };
+    }
+
+    let tokens: AuthReturnDto | undefined = undefined;
+
+    if (checkVerification?.user) {
+      tokens = await this.tokenService.generateAuthToken(
+        checkVerification.user,
+      );
+    }
+
+    return {
+      is_verified: true,
+      authTokens: tokens,
+    };
   }
 
   async handleLogout({ refreshToken }: RefreshTokenDto): Promise<boolean> {

@@ -21,4 +21,10 @@ export class Activations {
 
   @Column()
   hash: string;
+
+  @Column()
+  phone_number: string;
+
+  @Column()
+  code: number;
 }
