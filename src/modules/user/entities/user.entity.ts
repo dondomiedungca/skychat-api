@@ -13,6 +13,7 @@ import { Exclude } from 'class-transformer';
 import { Conversation } from 'src/modules/conversation/entities/conversation.entity';
 import { Chat } from 'src/modules/chats/entities/chat.entity';
 import { UsersConversations } from 'src/modules/conversation/entities/users-conversations.entity';
+import { Activations } from 'src/modules/token/entities/activations.entity';
 
 export interface UserActivity {
   show_activity?: boolean;
@@ -61,6 +62,9 @@ export class User {
 
   @Column()
   deleted_at?: Date;
+
+  @OneToOne(() => Activations, (activation) => activation.user)
+  activation: Activations;
 
   @ManyToMany(() => Role, { onDelete: 'CASCADE', eager: true })
   @JoinTable({

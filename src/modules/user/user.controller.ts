@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthUserDto, AuthReturnDto } from './dto/auth-user.dto';
+import { AuthUserDto, AuthReturnDto, CheckEmailDto } from './dto/auth-user.dto';
 import { User } from './entities/user.entity';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { GoogleSigninDto } from './dto/google-signin.dto';
@@ -18,6 +18,7 @@ import { CurrentUser } from 'src/decorators/user.decorator';
 import { JwtPayload } from 'jsonwebtoken';
 import { PhoneSigninDto } from './dto/phone-signin.dto';
 import { VerifyDto } from './dto/verify.dto';
+import { OnBoardingDataDto } from './dto/complete-onboarding.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -56,6 +57,20 @@ export class UserController {
     @Body() verifyDto: VerifyDto,
   ): Promise<{ is_verified: boolean; authTokens?: AuthReturnDto }> {
     return this.userService.verifyCode(verifyDto);
+  }
+
+  @Post('/complete-onboarding')
+  completeOnboarding(
+    @Body() completeOnboardingDto: OnBoardingDataDto,
+  ): Promise<{ is_success: boolean; authTokens?: AuthReturnDto }> {
+    return this.userService.completeOnboarding(completeOnboardingDto);
+  }
+
+  @Post('/check-email-if-exists')
+  checkEmailIfExist(
+    @Body() checkEmail: CheckEmailDto,
+  ): Promise<{ is_exists: boolean }> {
+    return this.userService.checkEmail(checkEmail);
   }
 
   @Post('/handle-logout')

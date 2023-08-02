@@ -12,9 +12,12 @@ export class Activations {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.activation)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Column({ name: 'user_id' })
+  user_id?: string;
 
   @Column()
   email: string;

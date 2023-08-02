@@ -10,6 +10,12 @@ export class AuthUserDto {
   password: string;
 }
 
+export class CheckEmailDto {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}
+
 export class AuthReturnDto {
   accessToken: string;
   refreshToken: string;

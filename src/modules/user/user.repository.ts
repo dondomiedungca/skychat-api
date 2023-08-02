@@ -24,7 +24,12 @@ export class UserRepository {
   ) {}
 
   findByEmail(email: string): Promise<User> {
-    return this.userRepository.findOneBy({ email });
+    return this.connection
+      .createQueryBuilder(User, 'users')
+      .leftJoinAndSelect('users.activation', 'activation')
+      .where('users.email = :email', { email })
+      .orderBy('users.created_at', 'DESC')
+      .getOne();
   }
 
   findById(id: string): Promise<User> {
@@ -32,6 +37,7 @@ export class UserRepository {
       .getRepository(User)
       .createQueryBuilder('users')
       .leftJoinAndSelect('users.roles', 'roles')
+      .leftJoinAndSelect('users.activation', 'activation')
       .where('users.id = :id', { id })
       .getOne();
   }

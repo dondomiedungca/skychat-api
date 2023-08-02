@@ -68,7 +68,6 @@ export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: any,
     @ConnectedSocket() socket: Socket,
   ) {
-    console.log(data);
     socket
       .to(data.roomId)
       .emit('call-handleIceCandidate', { candidate: data.candidate });
