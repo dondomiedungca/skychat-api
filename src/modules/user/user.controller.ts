@@ -9,7 +9,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthUserDto, AuthReturnDto, CheckEmailDto } from './dto/auth-user.dto';
+import {
+  AuthUserDto,
+  AuthReturnDto,
+  CheckEmailDto,
+  UserFindByIdDto,
+} from './dto/auth-user.dto';
 import { User } from './entities/user.entity';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { GoogleSigninDto } from './dto/google-signin.dto';
@@ -86,5 +91,11 @@ export class UserController {
     @Body() userNotificationDto: UserNotificationDto,
   ): Promise<boolean> {
     return this.userService.setNotification(userNotificationDto);
+  }
+
+  @Post('/find-by-id')
+  @UseGuards(AuthGuard)
+  findById(@Body() userFindByIdDto: UserFindByIdDto): Promise<User | null> {
+    return this.userService.userFindById(userFindByIdDto);
   }
 }

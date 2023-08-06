@@ -1,5 +1,10 @@
 import { GoogleSigninDto } from './dto/google-signin.dto';
-import { AuthReturnDto, AuthUserDto, CheckEmailDto } from './dto/auth-user.dto';
+import {
+  AuthReturnDto,
+  AuthUserDto,
+  CheckEmailDto,
+  UserFindByIdDto,
+} from './dto/auth-user.dto';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
@@ -478,5 +483,9 @@ export class UserService {
     this.connection.manager.save(userNotification);
 
     return false;
+  }
+
+  async userFindById(userFindByIdDto: UserFindByIdDto): Promise<User | null> {
+    return this.userRepository.findById(userFindByIdDto.user_id);
   }
 }

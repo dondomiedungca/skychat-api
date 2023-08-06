@@ -8,7 +8,6 @@ import { Expo, ExpoPushMessage } from 'expo-server-sdk';
 import { UserRepository } from 'src/modules/user/user.repository';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { FetchChatsDto } from './dto/fetch-chats.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
 import { ConversationService } from '../conversation/conversation.service';
 import { Chat, ConversationMeta } from './entities/chat.entity';
 import { UsersConversations } from '../conversation/entities/users-conversations.entity';
@@ -165,7 +164,12 @@ export class ChatsService {
         to: userPushToken.token,
         sound: 'default',
         body: createChatDto.payload.text,
-        data: { withSome: 'data' },
+        data: {
+          sender_id: currentUserObject.id,
+          conversation_id: conversation.id,
+          conversation_type: 'personal',
+        },
+        categoryId: 'receivedchat',
       };
 
       expo.sendPushNotificationsAsync([message]);

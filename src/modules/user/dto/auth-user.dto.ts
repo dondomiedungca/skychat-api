@@ -20,3 +20,9 @@ export class AuthReturnDto {
   accessToken: string;
   refreshToken: string;
 }
+
+export class UserFindByIdDto {
+  @IsNotEmpty()
+  @IsString()
+  user_id: string;
+}
