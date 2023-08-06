@@ -26,6 +26,8 @@ import { PhoneSigninDto } from './dto/phone-signin.dto';
 import { Activations } from '../token/entities/activations.entity';
 import { TypeVerification, VerifyDto } from './dto/verify.dto';
 import { OnBoardingDataDto } from './dto/complete-onboarding.dto';
+import { UserNotificationDto } from './dto/user-notification.dto';
+import { UserNotificationTokens } from './entities/user-notification.entity';
 
 @Injectable()
 export class UserService {
@@ -384,7 +386,7 @@ export class UserService {
         activity: {
           show_activity: true,
           last_active: moment.utc().toDate(),
-          is_active: false,
+          is_active: true,
         },
       });
       const newUser = await this.connection.manager.save(user);
@@ -442,5 +444,39 @@ export class UserService {
     return {
       is_exists: !!userCount,
     };
+  }
+
+  async setNotification(
+    userNotificationDto: UserNotificationDto,
+  ): Promise<boolean> {
+    const check = await this.connection
+      .createQueryBuilder(UserNotificationTokens, 'un')
+      .where(
+        'un.user_id = :user_id AND un.token = :token AND deleted_at IS NULL',
+        {
+          user_id: userNotificationDto.user_id,
+          token: userNotificationDto.token,
+        },
+      )
+      .getOne();
+
+    if (!!check) return true;
+
+    const user = await this.userRepository.findById(
+      userNotificationDto.user_id,
+    );
+
+    const userNotification = new UserNotificationTokens();
+    userNotification.created_at = moment.utc().toDate();
+    userNotification.token = userNotificationDto.token;
+    /**
+     * TODO Get device unique id
+     */
+    userNotification.device_unique_id = '';
+    userNotification.user = user;
+
+    this.connection.manager.save(userNotification);
+
+    return false;
   }
 }

@@ -19,6 +19,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { PhoneSigninDto } from './dto/phone-signin.dto';
 import { VerifyDto } from './dto/verify.dto';
 import { OnBoardingDataDto } from './dto/complete-onboarding.dto';
+import { UserNotificationDto } from './dto/user-notification.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -77,5 +78,13 @@ export class UserController {
   @UseGuards(AuthGuard)
   handleLogout(@Body() refreshTokenDto: RefreshTokenDto): Promise<boolean> {
     return this.userService.handleLogout(refreshTokenDto);
+  }
+
+  @Post('/set-notification')
+  @UseGuards(AuthGuard)
+  setNotification(
+    @Body() userNotificationDto: UserNotificationDto,
+  ): Promise<boolean> {
+    return this.userService.setNotification(userNotificationDto);
   }
 }

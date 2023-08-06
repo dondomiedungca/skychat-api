@@ -400,7 +400,12 @@ data/pg/*
 # config
 /configurations/config.staging.json
 /configurations/config.production.json
-/configurations/keys/*.pem
+/configurations/config.development.json
+
+/configurations/keys/private.development.key.pem
+/configurations/keys/public.development.key.pem
+/configurations/keys/private.staging.key.pem
+/configurations/keys/public.staging.key.pem
 
 *.code-workspace
 

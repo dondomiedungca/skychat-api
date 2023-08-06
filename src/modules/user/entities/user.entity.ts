@@ -14,6 +14,7 @@ import { Conversation } from 'src/modules/conversation/entities/conversation.ent
 import { Chat } from 'src/modules/chats/entities/chat.entity';
 import { UsersConversations } from 'src/modules/conversation/entities/users-conversations.entity';
 import { Activations } from 'src/modules/token/entities/activations.entity';
+import { UserNotificationTokens } from './user-notification.entity';
 
 export interface UserActivity {
   show_activity?: boolean;
@@ -106,4 +107,10 @@ export class User {
   )
   @JoinColumn({ name: 'user_id' })
   users_conversations: UsersConversations[];
+
+  @OneToMany(
+    () => UserNotificationTokens,
+    (userNotificationTokens) => userNotificationTokens.user,
+  )
+  notificationTokens: UserNotificationTokens[];
 }

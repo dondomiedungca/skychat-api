@@ -3,6 +3,7 @@ import * as moment from 'moment-timezone';
 import { JwtPayload } from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable } from '@nestjs/common';
+import { Expo, ExpoPushMessage } from 'expo-server-sdk';
 
 import { UserRepository } from 'src/modules/user/user.repository';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -13,6 +14,8 @@ import { Chat, ConversationMeta } from './entities/chat.entity';
 import { UsersConversations } from '../conversation/entities/users-conversations.entity';
 import { Conversation } from '../conversation/entities/conversation.entity';
 import { UpdateUnreadDto } from './dto/update-unread.dto';
+import { ConfigService } from '../base/config/config.service';
+import { UserNotificationTokens } from '../user/entities/user-notification.entity';
 
 @Injectable()
 export class ChatsService {
@@ -20,6 +23,7 @@ export class ChatsService {
     @Inject('CONNECTION') private readonly connection: DataSource,
     private readonly conversationService: ConversationService,
     private readonly userRepository: UserRepository,
+    private readonly configService: ConfigService,
     @InjectRepository(Chat) private readonly chatRepository: Repository<Chat>,
   ) {}
 
@@ -31,6 +35,8 @@ export class ChatsService {
     currentUserJunction: UsersConversations;
     chat: Chat;
   }> {
+    const ACCESS_TOKEN: string = this.configService.get('EXPO_ACCESS_TOKEN');
+
     const targetUserId = createChatDto.parties.find(
       (el) => el !== currentUser.sub,
     );
@@ -76,7 +82,7 @@ export class ChatsService {
         text: createChatDto.payload.text,
         conversation,
         chat_meta: JSON.stringify(createChatDto.payload.chat_meta),
-        created_at: moment(createChatDto.payload.created_at).utc().toDate(),
+        created_at: moment().utc().toDate(),
       });
     } else {
       conversation = await this.conversationService.getConversationByParties({
@@ -137,8 +143,32 @@ export class ChatsService {
         text: createChatDto.payload.text,
         conversation,
         chat_meta: JSON.stringify(createChatDto.payload.chat_meta),
-        created_at: moment(createChatDto.payload.created_at).utc().toDate(),
+        created_at: moment().utc().toDate(),
       });
+    }
+
+    const userPushToken = await this.connection
+      .createQueryBuilder(UserNotificationTokens, 'un')
+      .where('un.user_id = :user_id AND un.deleted_at IS NULL', {
+        user_id: targetUser.id,
+      })
+      .orderBy('un.created_at', 'DESC')
+      .getOne();
+
+    if (!!userPushToken) {
+      const expo = new Expo({ accessToken: ACCESS_TOKEN });
+
+      const message: ExpoPushMessage = {
+        title: `${currentUserObject.first_name}${
+          currentUserObject.last_name ? ' ' + currentUserObject.last_name : ''
+        }`,
+        to: userPushToken.token,
+        sound: 'default',
+        body: createChatDto.payload.text,
+        data: { withSome: 'data' },
+      };
+
+      expo.sendPushNotificationsAsync([message]);
     }
 
     return { targetUserJunction, currentUserJunction, chat: createdChat };

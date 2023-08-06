@@ -1,6 +1,7 @@
 {
   "APP_URL": "http://localhost:3000",
-  "APP_TITLE": "SkyChat",
+  "EXPO_ACCESS_TOKEN": "",
+  "APP_TITLE": "App Title",
   "environment": "development",
   "PORT": 3000,
   "token": {
@@ -24,21 +25,21 @@
   },
   "mail": {
     "port": 2525,
-    "host": "sandbox.smtp.mailtrap.io",
+    "host": "",
     "secure": false,
-    "from": "test@example.com",
+    "from": "t",
     "auth": {
-      "user": "72a2649dd56dc6",
-      "pass": "5f233bc8b82731"
+      "user": "",
+      "pass": ""
     }
   },
   "database": {
     "type": "postgres",
     "host": "localhost",
     "port": 5432,
-    "username": "skychat",
-    "password": "password",
-    "database": "skychat_development",
+    "username": "",
+    "password": "",
+    "database": "",
     "entities": [],
     "synchronize": true
   }

@@ -2,6 +2,7 @@ import * as Joi from 'joi';
 
 export default Joi.object({
   APP_URL: Joi.string(),
+  EXPO_ACCESS_TOKEN: Joi.string(),
   APP_TITLE: Joi.string(),
   environment: Joi.string().required(),
   PORT: Joi.number().min(1000).max(9999).required(),
